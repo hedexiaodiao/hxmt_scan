@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='utf-8'?>
+<DPConfig configure="Configure">
+  <Plugins_Name>
+    <plugin_name>
+      HXMT_KS_ID1145
+    </plugin_name>
+  </Plugins_Name>
+  <PATH>
+    <templatepath>
+     /hxmt/work/HDPC/Test_DPGS/DPGS_WORKSPACE/Template
+    </templatepath>
+   <inpath>
+    </inpath>
+    <outpath>
+  /sharefs/hbkg/user/luoqi/psf_project/test
+</outpath>
+  </PATH>
+  <Templatename>
+    <tempname>
+      Template_KS_ID1145.fits
+    </tempname>
+  </Templatename>
+  <Infile_Name>
+    <infilename>
+      <infilenamelist>
+  /sharefs/hbkg/data/SCAN/luoqi/HE_data/lc_1811/netlc/P010129506101he_netlc0.fits 
+</infilenamelist>
+      <infilenamelist>
+  /sharefs/hbkg/data/SCAN/luoqi/HE_data/lc_1811/netlc/P010129506101he_netlc1.fits 
+</infilenamelist>
+      <infilenamelist>
+  /sharefs/hbkg/data/SCAN/luoqi/HE_data/lc_1811/netlc/P010129506101he_netlc5.fits 
+</infilenamelist>
+    </infilename>
+    <infilename>
+      <infilenamelist>
+  /sharefs/hbkg/data/SCAN/luoqi/HE_data/att/P010129506101crtAtt.fits 
+</infilenamelist>
+    </infilename>
+  </Infile_Name>
+  <Outfile_Name>
+    <outfilename>
+      /GAL_he_small
+    </outfilename>
+  </Outfile_Name>
+  <Time_Range>
+    <Start>
+      <obsstart>
+        0
+      </obsstart>
+    </Start>
+    <Stop>
+      <obsstop>
+        1e16
+      </obsstop>
+    </Stop>
+  </Time_Range>
+  <Keywords_List>
+    <keyword name="OBJECT">
+      Crab
+    </keyword>
+  </Keywords_List>
+  <Inst_Info>
+    <Instrument>
+      HE
+    </Instrument>
+    <UnitID>
+      0
+    </UnitID>
+    <UnitType>
+      Det
+    </UnitType>
+    <EventType>
+      Force 
+    </EventType>
+    <StartTime>
+      78889000
+    </StartTime>
+    <Duration>
+      50000
+    </Duration>
+  </Inst_Info>
+</DPConfig>

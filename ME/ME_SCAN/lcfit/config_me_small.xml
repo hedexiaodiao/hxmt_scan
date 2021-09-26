@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<!--This is a simple xml.-->
+<DPConfig configure="Configure">
+  <Plugins_Name>
+    <plugin_name>
+      HXMT_KS_ID1145
+    </plugin_name>
+  </Plugins_Name>
+  <PATH>
+    <templatepath>
+     /hxmt/work/HDPC/Test_DPGS/DPGS_WORKSPACE/Template
+    </templatepath>
+    <inpath>
+    </inpath>
+    <outpath>
+./
+    </outpath>
+  </PATH>
+  <Templatename>
+    <tempname>
+      Template_KS_ID1145.fits
+    </tempname>
+  </Templatename>
+  <Infile_Name>
+    <infilename>
+      <infilenamelist>
+./me_lc_box0_small_cut.fits
+      </infilenamelist>
+      <infilenamelist>
+./me_lc_box1_small_cut.fits
+      </infilenamelist>
+      <infilenamelist>
+./me_lc_box2_small_cut.fits
+      </infilenamelist>
+    </infilename>
+    <infilename>
+      <infilenamelist>
+       ./att.fits
+      </infilenamelist>
+    </infilename>
+  </Infile_Name>
+  <Outfile_Name>
+    <outfilename>
+      me_3box
+    </outfilename>
+  </Outfile_Name>
+  <Time_Range>
+    <Start>
+      <obsstart>
+        0
+      </obsstart>
+    </Start>
+    <Stop>
+      <obsstop>
+        1e16
+      </obsstop>
+    </Stop>
+  </Time_Range>
+  <Keywords_List>
+    <keyword name="OBJECT">
+      Crab
+    </keyword>
+  </Keywords_List>
+  <Inst_Info>
+    <Instrument>
+      ME
+    </Instrument>
+    <UnitID>
+      0
+    </UnitID>
+    <UnitType>
+      Det
+    </UnitType>
+    <EventType>
+      Force 
+    </EventType>
+    <StartTime>
+      78889000
+    </StartTime>
+    <Duration>
+      50000
+    </Duration>
+  </Inst_Info>
+</DPConfig>

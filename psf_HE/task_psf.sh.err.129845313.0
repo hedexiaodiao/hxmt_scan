@@ -1,0 +1,9 @@
+/sharefs/hbkg/user/luoqi/home/mypython: line 17: myheainit: command not found
+Traceback (most recent call last):
+  File "/sharefs/hbkg/user/luoqi/GRB/work/ihep4/psf_project/psfcplx_log.py", line 2, in <module>
+    from xspec import *
+  File "/hxmt/soft/Astro/heasoft-6.27.2/x86_64-pc-linux-gnu-libc2.17/lib/python/xspec/__init__.py", line 66, in <module>
+    from .chain import ChainManager, AllChains, Chain
+  File "/hxmt/soft/Astro/heasoft-6.27.2/x86_64-pc-linux-gnu-libc2.17/lib/python/xspec/chain.py", line 4, in <module>
+    from . import _pyXspec
+ImportError: /hxmt/soft/Astro/heasoft-6.27.2/x86_64-pc-linux-gnu-libc2.17/lib/python/xspec/_pyXspec.so: undefined symbol: _Py_ZeroStruct

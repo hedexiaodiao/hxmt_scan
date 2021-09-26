@@ -1,0 +1,1 @@
+hep_sub /sharefs/hbkg/user/luoqi/GRB/work/ihep4/HXMT_GPS_Program/task_genlc.sh -argu P010129506101 -g hxmt -mem 8000 -o /sharefs/hbkg/data/SCAN/luoqi/joboutput -e /sharefs/hbkg/data/SCAN/luoqi/joboutput

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GenLC_configure>
+	<OBSID Renew="True">P021101130101</OBSID>
+	<PATH>
+		<BaseDataPath>/hxmt/work/HXMT-DATA/1L/</BaseDataPath>
+		<IntermDataPath>/sharefs/hbkg/data/SCAN/nangyi/HE_data/</IntermDataPath>
+		<PfilePath>/home/hxmt/nangyi/pfiles/</PfilePath>
+		<PfilePath>/home/hxmt/zhaohaish/soft/install/x86_64-unknown-linux-gnu-libc2.12/syspfiles/</PfilePath>
+		<FitPath>/sharefs/hbkg/data/SCAN/nangyi/SGR1953/</FitPath>
+		<GRBPath>/sharefs/hbkg/data/SCAN/nangyi/HE_GPS_GRB/</GRBPath>
+	</PATH>
+	<PARAMETER>
+		<ScreenParaName>ELV,DYE_ELV,COR,T_SAA,TN_SAA,SUN_ANGLE,MOON_ANGLE,ANG_DIST</ScreenParaName>
+		<ScreenPara>6,6,0,5,5,30,7,360</ScreenPara>
+		<MinPiPara>22,23,22,23,22,22,23,22,22,22,22,22,22,22,22,22,23,22</MinPiPara>
+		<MaxPiPara>80,85,81,85,83,83,84,82,82,83,82,82,82,82,80,82,83,82</MaxPiPara>
+        <PiPara25>22,23,22,23,22,22,23,22,22,22,22,22,22,22,22,22,23,22</PiPara25>
+        <PiPara50>42,45,43,44,45,44,46,43,44,44,43,44,43,43,43,43,44,43</PiPara50>
+        <PiPara100>80,85,81,85,83,83,84,82,82,83,82,82,82,82,80,82,83,82</PiPara100>
+		<EHKPara Introduce="Whether to use ehkfile in BaseData or re-generate">False</EHKPara>
+	</PARAMETER>
+	<LOG>
+		<LC_NormalLog>LC_NormalA01.log</LC_NormalLog>
+		<LC_ZeroLog>LC_ZeroA01.log</LC_ZeroLog>
+		<LC_GRBLog>LC_GRBA01.log</LC_GRBLog>
+	</LOG>
+	<FitConfig>config_he.xml</FitConfig>
+	<FitProgram>simpleknow</FitProgram>
+</GenLC_configure>
