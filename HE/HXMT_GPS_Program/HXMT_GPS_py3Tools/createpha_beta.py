@@ -91,15 +91,17 @@ def cpha(crf,fake):
     f2.close()
     my_env = os.environ
     commond = 'flx2xsp %stemppha%s.txt %s.pha %s.rsp' % (fname, ran, fake, fake)
-    cmd_tem = 'export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;' + commond
+    cmd_tem = 'source /sharefs/hbkg/user/luoqi/home/mypython;export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;' + commond
     exec_code, exec_log = exec_cmd(cmd_tem, my_env)
     print(cmd_tem)
     print('exec_code:', exec_code)
 
     os.system('rm %stemppha%s.txt'%(fname,ran))
 
-    commond = 'grppha %s.pha !%s.grp "bad %stempbad%s.dat&exit"'%(fake,fake,fname,ran)
-    cmd_tem = 'export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;' + commond
+    if os.path.exists('%s.grp'%(fake)):
+        os.system('rm %s.grp'%(fake))
+    commond = 'grppha %s.pha %s.grp "bad %stempbad%s.dat&exit"'%(fake,fake,fname,ran)
+    cmd_tem = 'source /sharefs/hbkg/user/luoqi/home/mypython;export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;' + commond
     exec_code, exec_log = exec_cmd(cmd_tem, my_env)
     print(cmd_tem)
     print('exec_code:', exec_code)

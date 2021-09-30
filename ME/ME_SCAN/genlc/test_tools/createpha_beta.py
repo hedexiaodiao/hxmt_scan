@@ -79,7 +79,9 @@ def cpha(crf,fake):
     f2.close()
     os.system('flx2xsp %stemppha%s.txt %s.pha %s.rsp'%(fname,ran,fake,fake))
     os.system('rm %stemppha%s.txt'%(fname,ran))
-    commond = 'grppha %s.pha !%s.grp "bad %stempbad%s.dat&exit"'%(fake,fake,fname,ran)
+    if os.path.exists('%s.grp'%(fake)):
+        os.system('rm %s.grp'%(fake))
+    commond = 'grppha %s.pha %s.grp "bad %stempbad%s.dat&exit"'%(fake,fake,fname,ran)
     os.system(commond)
     os.system('rm %stempbad%s.dat'%(fname,ran))
     print "generation of the faked pha file and rsp file : success"

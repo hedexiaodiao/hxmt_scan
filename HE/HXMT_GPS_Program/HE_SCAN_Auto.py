@@ -11,7 +11,7 @@ import time
 
 def fucgenlc(path):
     print(str(path))
-    temp = os.system("python %s/HXMT_GPS_Program/genlc_module.py %s;ls"%(mkdir_path,str(path)))
+    temp = os.system("python %s/HXMT_GPS_Program/funcgenlc_module.py %s;ls"%(mkdir_path,str(path)))
     return [path,temp]
 
 def fuc_normfit(ObsID):

@@ -296,10 +296,13 @@ def genlc(ELV, DYE_ELV, COR, T_SAA, TN_SAA, SUN_ANGLE, MOON_ANGLE, ANG_DIST,ehkf
     ###os.system("cp fitdata_plot.py %s" % (filestr + "/"))
     os.chdir(filestr)
     ###sub_gps_lcfit.sh->task_lcfit.sh###dis
-    commond = "sh {:s}task_lcfit.sh {:s}/config_he.xml".format(program_tree + "/HXMT_GPS_Program/",filestr)###"python {:s}Lcfit.py {:s}config_he.xml".format(program_tree + "/HXMT_GPS_Program/",filestr + "/")
+    ###commond = "sh {:s}task_lcfit.sh {:s}/config_he.xml".format(program_tree + "/HXMT_GPS_Program/",filestr)###
+    commond = "python {:s}Lcfit.py {:s}config_he.xml".format(program_tree + "/HXMT_GPS_Program/",filestr + "/")
+    ###commond = "python /sharefs/hbkg/user/luoqi/HXMT_SCAN/HE/HXMT_GPS_Program/Lcfit.py /sharefs/hbkg/data/SCAN/HE/Midd/P010129506101/config_he.xml"
     ###'''###
     cmd_tem = 'source /sharefs/hbkg/user/luoqi/home/mypython;export PFILES="{:s}";export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;'.format(
             program_tree, pfilepath) + commond
+    ###os.system(commond)
     exec_code, exec_log = exec_cmd(cmd_tem, my_env)
     print(cmd_tem)
     print('exec_code:', exec_code)
