@@ -24,7 +24,7 @@ print('sucess2')
 print('sucess3')
 import LoadsrcLog
 print('sucess3.0')
-import funcLoadMod
+###import funcLoadMod
 print('sucess3.1')
 from readxml import *
 print('sucess3.2')
@@ -32,9 +32,6 @@ from LoadsrcLog import gensrctxt
 import createpha_beta as createpha
 print('sucess4')
 import src_map as srcmap
-import funchxmt_paraodic as hxmtpsf
-from funcLoadMod import *
-print('sucess5')
 ###import py3LoadMod
 import xspec
 from fitdata_plot import *
@@ -45,6 +42,10 @@ print("import class success")
 
 xspec.AllModels
 def selfInitModel(src,outfilePri):
+    import funcLoadMod
+    import funchxmt_paraodic as hxmtpsf
+    from funcLoadMod import  Sel_Median,FindGap,distance,GetAttInf,GetXmlInf,InitModel_T,InitModel,Sel_srcs,InitModel_fixbkg,AddNewPot,AddNewPot2,exit_opin,divid_field,priv_pot,AddNewPot3
+    print('sucess5')
     print("New pot Runing >>>>>>>>>>> %s >>>>>>>>>>>\n"%src[0])
     time1= time.time()
     #from xspec import *
@@ -602,6 +603,11 @@ def lcfit(cfg,program_tree,scan_tree,time1,Analogfile,MidductPath):
         print(infilePri,file=f)
 
 def funcfit(cfg):
+    import funcLoadMod
+    import funchxmt_paraodic as hxmtpsf
+    from funcLoadMod import Sel_Median,FindGap,distance,GetAttInf,GetXmlInf,InitModel_T,InitModel,Sel_srcs,InitModel_fixbkg,AddNewPot,AddNewPot2,exit_opin,divid_field,priv_pot,AddNewPot3
+    print('sucess5')
+
     #######read input output template paths and files from  config file##########
     dir_strlist = []
     try:

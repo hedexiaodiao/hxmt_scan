@@ -764,7 +764,7 @@ def poly_bkg(lcfile):
                     bkg = bkg1
                     xr_sel = xr1
                     yr_sel = yr1
-        plt.show()
+        ###plt.show()
         plt.close('all')    
     hdu.close()
     del hdu
@@ -923,7 +923,7 @@ def poly_bkg_array(x_org,y_org):
                     bkg = bkg1
                     xr_sel = xr1
                     yr_sel = yr1
-        plt.show()
+        ###plt.show()
         plt.close('all')    
     hdu.close()
     del hdu

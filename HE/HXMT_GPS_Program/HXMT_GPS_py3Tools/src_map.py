@@ -293,6 +293,6 @@ if __name__ == "__main__":
     att = np.loadtxt("att.dat")
     plt.plot(att[:,0],att[:,1],'r-')
     plt.grid()
-    plt.show()
+    ###plt.show()
 
 
