@@ -31,28 +31,6 @@ def mkdir_try(dirname):
 def genlc(ELV, DYE_ELV, COR, T_SAA, TN_SAA, SUN_ANGLE, MOON_ANGLE, ANG_DIST,ehkfile,lcfile, lcblind, lcpath, netlcpath,alllcfile,nodeadlc,minpi, maxpi,filestr):
     evtfile,tpfile,attfile,dtfile,hvfile,pmfile,ortehkfile = FindLC_basefile(ObsID, fpath, INST='HE', EHKFILE=OrgEhkTerms)
     ############################################################################################
-    try:
-        os.makedirs(filestr)###mode=0755
-    except OSError:
-        pass
-
-    tree = ElementTree()
-    tree.parse(xmlpath)
-    pathnodes = tree.findall("PATH/outpath")
-    outnodes = tree.findall("Outfile_Name/outfilename")
-    filenodes = tree.findall("Infile_Name/infilename/infilenamelist")
-    outfile = filestr + "/config_he.xml"
-    print(outfile)
-    filenodes[0].text ='\n  ' + netlcpath + ObsID + "_he_netlc_b0.fits \n"
-    filenodes[1].text ='\n  ' + netlcpath + ObsID + "_he_netlc_b1.fits \n"
-    filenodes[2].text ='\n  ' + netlcpath + ObsID + "_he_netlc_b2.fits \n"
-    filenodes[3].text ='\n  ' + crtattfile +' \n'
-    pathnodes[0].text ='\n  '+filestr+'  \n'
-
-    tree.write(outfile, encoding="utf-8",xml_declaration=True)
-
-    cfg = '{:s}/config_he.xml'.format(filestr)
-    gl.set_value('cfg', cfg)
 
     print(evtfile)
     print(attfile)
@@ -307,6 +285,28 @@ def genlc(ELV, DYE_ELV, COR, T_SAA, TN_SAA, SUN_ANGLE, MOON_ANGLE, ANG_DIST,ehkf
         except OSError:
             pass
         os.system('cp '+scan_tree + '/Midd/' + ObsID+'/* '+filestr+'/')
+    try:
+        os.makedirs(filestr)###mode=0755
+    except OSError:
+        pass
+
+    tree = ElementTree()
+    tree.parse(xmlpath)
+    pathnodes = tree.findall("PATH/outpath")
+    outnodes = tree.findall("Outfile_Name/outfilename")
+    filenodes = tree.findall("Infile_Name/infilename/infilenamelist")
+    outfile = filestr + "/config_he.xml"
+    print(outfile)
+    filenodes[0].text ='\n  ' + netlcpath + ObsID + "_he_netlc_b0.fits \n"
+    filenodes[1].text ='\n  ' + netlcpath + ObsID + "_he_netlc_b1.fits \n"
+    filenodes[2].text ='\n  ' + netlcpath + ObsID + "_he_netlc_b2.fits \n"
+    filenodes[3].text ='\n  ' + crtattfile +' \n'
+    pathnodes[0].text ='\n  '+filestr+'  \n'
+
+    tree.write(outfile, encoding="utf-8",xml_declaration=True)
+
+    cfg = '{:s}/config_he.xml'.format(filestr)
+    gl.set_value('cfg', cfg)
     os.chdir(filestr)
     ###sub_gps_lcfit.sh->task_lcfit.sh###dis
     '''
@@ -318,8 +318,6 @@ def genlc(ELV, DYE_ELV, COR, T_SAA, TN_SAA, SUN_ANGLE, MOON_ANGLE, ANG_DIST,ehkf
     print('exec_code:', exec_code)
     '''###
     print('sucess0')
-    cfg = '{:s}/config_he.xml'.format(filestr)
-    gl.set_value('cfg',cfg)
     import funcLcfit
     print('sucess1')
     funcLcfit.funcfit('{:s}/config_he.xml'.format(filestr))

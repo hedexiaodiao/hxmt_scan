@@ -102,6 +102,10 @@ def lcfit(cfg,program_tree,scan_tree,time1,Analogfile,MidductPath):
     with open("process", 'a') as f:
         f.write("Start\t---> " + str(time.strftime('%H:%M.%S, %Y.%m.%d', time.localtime(time.time()))) + "\n")
     #################################oooooo#####################################
+    import funcLoadMod
+    import funchxmt_paraodic as hxmtpsf
+    from funcLoadMod import Sel_Median, FindGap, distance, GetAttInf, GetXmlInf, InitModel_T, InitModel, Sel_srcs, \
+        InitModel_fixbkg, AddNewPot, AddNewPot2, exit_opin, divid_field, priv_pot, AddNewPot3
     lcfile0, lcfile1, lcfile2, attfile, infilePri, outfilePri = GetXmlInf(cfg)
 
     print('infilePri:',infilePri)

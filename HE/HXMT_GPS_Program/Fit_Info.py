@@ -49,6 +49,9 @@ infile1 = (inpathstr+infilestr1)#.encode()
 infile2 = (inpathstr+infilestr2)#.encode()
 infile3 = (inpathstr+infilestr3)#.encode()
 filename = infile3.split("/")[-1][:13]
+need_pathhead = ''
+for i in range(len(infile3.split("/"))-2):
+    need_pathhead += infile0.split("/")[i]+'/'
 
 os.chdir(outpathstr)
 #------------------------------------------------------------
@@ -191,14 +194,14 @@ try:
 except:
     program_tree = '/sharefs/hbkg/user/luoqi/HXMT_SCAN/HE'
     scan_tree = '/sharefs/hbkg/data/SCAN'
-bldhd = pf.open('%s/HE/Org/%s/%s_blind_g0_16.lc'%(scan_tree,filename,filename))
+bldhd = pf.open('%sOrg/%s/%s_blind_g0_16.lc'%(need_pathhead,filename,filename))
 yep = np.in1d(bldhd[1].data.field(0),lctm)
 blddt = bldhd[1].data[yep]
 bldu = pf.BinTableHDU(data=blddt, header=prihdr, name= 'BlindDETECTOR')
 thdulist.append(bldu)
 thdulist.writeto('%s_FITDATA_HE.fits'%filename,overwrite = True)
 
-fProd_obspath = scan_tree + '/HE/Prod/' + filename  ###
+fProd_obspath = need_pathhead + 'Prod/' + filename  ###
 mkdir_try(fProd_obspath)
 os.system('cp %s_FITDATA_HE.fits %s/%s_FITDATA_HE.fits'% (filename, fProd_obspath, filename))
 
