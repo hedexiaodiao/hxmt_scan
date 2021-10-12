@@ -3,3 +3,5 @@
 
 测试一体运行：
 python funcgenlc_moudle.py P010129506101
+
+fixed

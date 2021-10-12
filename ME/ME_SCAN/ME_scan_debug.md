@@ -1,3 +1,8 @@
+##Notes
+A04目录结构与之前完全不一样，没有找到EHK文件
+A03, /sharefs/hbkg/data/SCAN/ME/Org/GTI/P030124061101_gtiv2.fits是0k,
+
+##A03
 ```buildoutcfg
 megrade : HXMT ME task, megrade is running
 megrade : PILParSet Warning: parameter 'clobber' set to yes!
@@ -151,4 +156,53 @@ mescreen : mescreen: User detector selection:
 mescreen : Bad (Bad,hot,flickening) detector List:
 mescreen :        ID:  1
 
+```
+
+## A04
+```buildoutcfg
+megrade : HXMT ME task, megrade is running successfully!
+megrade : ##############################################
+P040124006801  : grade end
+Process Process-92:
+Traceback (most recent call last):
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 267, in _bootstrap
+    self.run()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "multi_time_merun.py", line 22, in fuc
+    timing_run.merun_v2(fpath,Wpath,str(path))
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/timing_run.py", line 178, in merun_v2
+    os.system("cp %s %s" % (ehkfile, Wehkfile))
+UnboundLocalError: local variable 'ehkfile' referenced before assignment
+[####################################################################################################][100%]
+megrade : HXMT ME task, megrade is running successfully!
+megrade : ##############################################
+P040124006901  : grade end
+Process Process-93:
+Traceback (most recent call last):
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 267, in _bootstrap
+    self.run()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "multi_time_merun.py", line 22, in fuc
+    timing_run.merun_v2(fpath,Wpath,str(path))
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/timing_run.py", line 178, in merun_v2
+    os.system("cp %s %s" % (ehkfile, Wehkfile))
+UnboundLocalError: local variable 'ehkfile' referenced before assignment
+[####################################################################################################][100%]
+megrade : HXMT ME task, megrade is running successfully!
+megrade : ##############################################
+P040124007001  : grade end
+Process Process-94:
+Traceback (most recent call last):
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 267, in _bootstrap
+    self.run()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "multi_time_merun.py", line 22, in fuc
+    timing_run.merun_v2(fpath,Wpath,str(path))
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/timing_run.py", line 178, in merun_v2
+    os.system("cp %s %s" % (ehkfile, Wehkfile))
+UnboundLocalError: local variable 'ehkfile' referenced before assignment
+Check END
 ```
