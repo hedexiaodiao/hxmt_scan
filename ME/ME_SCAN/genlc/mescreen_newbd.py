@@ -283,25 +283,33 @@ def mescreen_newbd(Wpath, ObsID):
 #####################################mescreen(all pixel)#########################################
 	if (len(new_str)!=0)&((new_stp-new_str).sum()>300):
 		#os.environ["PFILES"]="/sharefs/hbkg/user/saina/pfiles%s;/home/hxmt/hxmtsoft2/soft/install/x86_64-unknown-linux-gnu-libc2.12/syspfiles"%(ObsID)
-		os.system('mescreen evtfile=%s gtifile=%s outfile=%s baddetfile=%s userdetid="0-53"' % (Wgradefile, Wbkg_gtifile, Wbkg_screenfile,bdet0file))
+		cmd = 'mescreen evtfile=%s gtifile=%s outfile=%s baddetfile=%s userdetid="0-53"' % (Wgradefile, Wbkg_gtifile, Wbkg_screenfile,bdet0file)
+		print('mescreen(all pixel) start')
+		print(cmd)
+		os.system(cmd)
+		print('mescreen(all pixel) end')
 #####################################idcount & hr################################################
 		scrtype='bkg'
 		sel=1
 		detidor, pior, startt, stopt, tstime, gtime, dett0, dettb = read_scr(Wpath, ObsID, scrtype)
 		gtnew=hptime(Wpath, ObsID, dettb, scrtype, sel)
-		print gtnew
+		print("gtnew:", gtnew)
 		if gtnew==0:
 			detid=detidor
 			pi=pior
 		else:
-			if ((new_stp-new_str).sum()-(gtnew[1]-gtnew[0]).sum())<=250:
+			condi1 =  ((new_stp-new_str).sum()-(gtnew[1]-gtnew[0]).sum())
+			print("(new_stp-new_str).sum()-(gtnew[1]-gtnew[0]).sum():",condi1)
+			if condi1<=250:
 				file_bd = '%s/run_merun.txt'%(file_bdpath)###
 				with open(file_bd,'a') as f:
 					f.write('%s -- Warning: too short gti -- %s' % (ObsID, ((new_stp - new_str).sum() - (gtnew[1] - gtnew[0]).sum())) + '\n')
 				for i in range(int(ObsID[7:])):
-					obid1='P021100'+str(int(ObsID[7:]) - i)
-					if os.path.exists("%s/%s_me_bdet.fits" % (Org_obspath,obid1)):###careful
-						os.system('cp %s/%s_me_bdet.fits %s' % (Org_obspath,obid1, Wbaddetfile))###
+					###obid1='P021100'+str(int(ObsID[7:]) - i)
+					obid1 = 'P030124062901'  ###change by LQ
+					Org_obid1path = "%s/%s" % (OrgWpath, obid1)
+					if os.path.exists("%s/%s_me_bdet.fits" % (Org_obid1path,obid1)):###careful
+						os.system('cp %s/%s_me_bdet.fits %s' % (Org_obid1path,obid1, Wbaddetfile))###
 						with open(file_bd,'a') as f:
 							f.write('%s -- cp bdfile from %s' % (ObsID, obid1) + '\n')
 						print "cp bdfile from ",obid1
@@ -319,8 +327,8 @@ def mescreen_newbd(Wpath, ObsID):
 
 			detid=detidor[mm2]
 			pi=pior[mm2]
-
-		print detid.size
+		print("idcount & hr")
+		print("detid.size:", detid.size)
 ###########################################################################################
 		idcount_t=[]
 		idcount=[]
@@ -339,7 +347,7 @@ def mescreen_newbd(Wpath, ObsID):
 				hd1=np.append(hd1,float(len(detid1x1))/float(len(detid1x2)))
 			else:
 				hd1=np.append(hd1,0)
-		print idcount_t,hd11,hd12
+		print("idcount_t,hd11,hd12:", idcount_t,hd11,hd12)
 #########################################ideal ct##############################################
 
 		sbd=pf.open("/home/hxmt/hxmtsoft2/soft/install/x86_64-unknown-linux-gnu-libc2.12/refdata/medetectorstatus.fits")
@@ -431,7 +439,7 @@ def mescreen_newbd(Wpath, ObsID):
 		bdm=np.in1d(np.array(nump),newl1[0][selp],invert=True)
 		newbd=np.array(nump)[bdm]
 		numbd=len(newbd)
-		print newbd,numbd
+		print("newbd,numbd:", newbd,numbd)
 		#plt.scatter(np.array(nump),idcount_t)
 		#plt.scatter(np.array(nump)[maskp],ictup)
 ################################bad detector list(ObsID)###################################

@@ -1,6 +1,8 @@
 ##Notes
+比较标准的HXMTSoft环境：
+/home/hxmt/hxmtsoft2/hxmtsoftv2.04/hxmtsoft_v2.04.sh
 A04目录结构与之前完全不一样，没有找到EHK文件
-A03, /sharefs/hbkg/data/SCAN/ME/Org/GTI/P030124061101_gtiv2.fits是0k,
+A03, /sharefs/hbkg/data/SCAN/ME/Org/GTI/P030124061101_gtiv2.fits是0k <---1L的EHK文件里 SUN_ANG, MOON_ANG从某时开始全是0
 
 ##A03
 ```buildoutcfg
@@ -205,4 +207,72 @@ Traceback (most recent call last):
     os.system("cp %s %s" % (ehkfile, Wehkfile))
 UnboundLocalError: local variable 'ehkfile' referenced before assignment
 Check END
+```
+
+##After rm MOON/SUN ANG
+####errorCorrect 56
+由bdet未正常生成导致
+```buildoutcfg
+mescreen evtfile=/sharefs/hbkg/data/SCAN/ME/Org/P030124065601/P030124065601_me_grade.fits gtifile=/sharefs/hbkg/data/SCAN/ME/Org/GTI/P030124065601_me_gti.fits outfile=/sharefs/hbkg/data/SCAN/ME/Org/Screen/P030124065601_me_screen.fits baddetfile=/sharefs/hbkg/data/SCAN/ME/Org/P030124065601/P030124065601_me_bdet.fits userdetid="0-53"
+mescreen : ##############################################
+mescreen : HXMT ME task, mescreen is running
+mescreen : mescreen: User detector selection:
+mescreen : mescreen: Error: Unable to get 'merangefile'! Always in $MEADAS/refdata.
+mescreen : HXMT ME task, mescreen is running unsuccessfully!
+mescreen : ##############################################
+```
+```buildoutcfg
+melcgen : HXMT ME task, melcgen is running unsuccessfully!
+melcgen : ##############################################
+P030124065601  : o-lc end
+P030124065601  1.Soft Cal: End##############################                                         ][59%]
+Process Process-24:
+Traceback (most recent call last):
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 267, in _bootstrap
+    self.run()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "multi_time_merun.py", line 22, in fuc
+    timing_run.merun_v2(fpath,Wpath,str(path))
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/timing_run.py", line 241, in merun_v2
+    errorCorrect.errorCorrect('%s' % Wpath,'%s' % ObsID)
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/errorCorrect.py", line 56, in errorCorrect
+    data1=pf.open(slcfile_list[num])#########################                                        ][60%]
+IndexError: list index out of range
+[####################################################################################################][100%]
+melcgen : HXMT ME task, melcgen is running successfully!
+melcgen : ##############################################
+P030124061801  : o-lc end
+P030124061801  1.Soft Cal: End
+```
+
+####gen_lc_me 48
+仍是SUN_ANG, MOON_ANG导致的,修正后解决这部分
+```buildoutcfg
+[   0 4546 8930] pot:: 1
+::::: 4380 4380
+1
+1
+1
+56.0 -29.0
+WARNING: AstropyDeprecationWarning: "clobber" was deprecated in version 2.0 and will be removed in a future version. Use argument "overwrite" instead. [astropy.utils.decorators]
+WARNING: AstropyDeprecationWarning: "clobber" was deprecated in version 2.0 and will be removed in a future version. Use argument "overwrite" instead. [astropy.utils.decorators]
+me 2 done
+P030124061801 2.BKG Cal: LC without BKG and BKG value.
+Process Process-21:
+Traceback (most recent call last):
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 267, in _bootstrap
+    self.run()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "multi_time_merun.py", line 22, in fuc
+    timing_run.merun_v2(fpath,Wpath,str(path))
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/timing_run.py", line 247, in merun_v2
+    gen_lc_me.gen_lc_me(Wehkfile, Wme_gtifile, '%s' % (Wpath), "%s" % ObsID)
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/gen_lc_me.py", line 48, in gen_lc_me
+    gtitstart = np.r_[gti_all[0],gti_start]
+IndexError: index 0 is out of bounds for axis 0 with size 0
+P040124000201
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124000201 : No data
+P040124000301
 ```

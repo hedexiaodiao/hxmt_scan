@@ -30,10 +30,13 @@ def gen_lc_me(ehkfile, gtifile, Wpath, ObsID):
 	ehk_tb = ehk_tb[(ehk_tb.field(0)>=tstart)&(ehk_tb.field(0)<tstop)]
 	ehk_time = ehk_tb.field(0)
 	#ehk_time=ehk_time-min(ehk_time)
-	
+
+	###&(ehk_tb.field("SUN_ANG")>=10)
+	###&(ehk_tb.field("SAA_FLAG")==0)
+	###&(ehk_tb.field("MOON_ANG")>=4)
 	mask = (ehk_tb.field("ELV")>5)&(ehk_tb.field("T_SAA")>=200)&(ehk_tb.field("TN_SAA")>=100)\
-	&(ehk_tb.field("SAA_FLAG")==0)&(ehk_tb.field("COR2")>=8)&(ehk_tb.field("SUN_ANG")>=10)\
-	&(ehk_tb.field("MOON_ANG")>=4)&(ehk_tb.field("ANG_DIST")<=359)&\
+	&(ehk_tb.field("COR2")>=8)\
+	&(ehk_tb.field("ANG_DIST")<=359)&\
 	((ehk_tb.field("SAT_LAT")<31)|(ehk_tb.field("SAT_LAT")>38))\
 	&((ehk_tb.field("SAT_LON")>245)|(ehk_tb.field("SAT_LON")<288))\
 	&(ehk_tb.field("SAT_LAT")>=-36.5)&(ehk_tb.field("SAT_LAT")<=36.5)
