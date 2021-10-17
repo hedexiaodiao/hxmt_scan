@@ -430,3 +430,177 @@ Traceback (most recent call last):
     return umr_minimum(a, axis, None, out, keepdims, initial)
 ValueError: zero-size array to reduction operation minimum which has no identity
 ```
+
+### use 1N ehk
+```buildoutcfg
+P030124043001  : pi end
+megrade : ##############################################
+megrade : HXMT ME task, megrade is running
+megrade : PILParSet Warning: parameter 'clobber' set to yes!
+megrade : PILParSet Warning: the file /sharefs/hbkg/data/SCAN/ME/Org/P030124043001/P030124043001_me_grade.fits will be overwritten!
+[####################################################################################################][100%]
+megrade : PILParSet Warning: parameter 'clobber' set to yes!
+megrade : PILParSet Warning: the file /sharefs/hbkg/data/SCAN/ME/Org/P030124013801/P030124013801_me_dead.fits will be overwritten!
+megrade : HXMT ME task, megrade is running successfully!
+megrade : ##############################################
+P030124013801  : grade end
+Process Process-12:
+Traceback (most recent call last):
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 267, in _bootstrap
+    self.run()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "multi_time_merun.py", line 22, in fuc
+    timing_run.merun_v2(fpath,Wpath,str(path))
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/timing_run.py", line 183, in merun_v2
+    os.system("cp %s %s" % (ehkfile, Wehkfile))
+UnboundLocalError: local variable 'ehkfile' referenced before assignment
+```
+```buildoutcfg
+megrade : PILParSet Warning: parameter 'clobber' set to yes!
+megrade : PILParSet Warning: the file /sharefs/hbkg/data/SCAN/ME/Org/P030124064001/P030124064001_me_dead.fits will be overwritten!
+megrade : HXMT ME task, megrade is running successfully!
+megrade : ##############################################
+P030124064001  : grade end
+rm: cannot remove ‘/sharefs/hbkg/data/SCAN/ME/Org/GTI/P030124064001_me_gti.fits’: No such file or directory
+megtigen tempfile=/hxmt/work/HXMT-DATA/1L/A03/P0301240/P0301240640/P030124064001-20210706-01-01/ME/HXMT_P030124064001_ME-TH_FFFFFF_V1_L1P.FITS ehkfile=/sharefs/hbkg/data/SCAN/ME/Org/EHK/P030124064001_ehk.fits outfile=/sharefs/hbkg/data/SCAN/ME/Org/GTI/P030124064001_gtiv2.fits defaultexpr=NONE expr="ELV>5&&COR>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"
+megtigen : ##############################################
+megtigen : HXMT ME task, megtigen is running
+megtigen : HXMT ME task, megtigen is running successfully!############                               ][69%]
+megtigen : ##############################################
+P030124064001  : o-gti & ehk end
+[3.00238379e+08] [3.00250048e+08]##########################################                          ][74%]
+WARNING: AstropyDeprecationWarning: "clobber" was deprecated in version 2.0 and will be removed in a future version. Use argument "overwrite" instead. [astropy.utils.decorators]
+P030124064001  : r-gti end
+q list size:  (71060,)
+291###########################################################################                       ][77%]
+srcs::::::: [[147.33446  251.44875  -45.61111 ]
+ [462.438    256.43542  -36.423058]
+ [ 28.75739  262.98917  -33.83472 ]
+ [ 96.02605  257.225    -44.102   ]]
+gti sum:  0.0
+Process Process-14:
+Traceback (most recent call last):
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 267, in _bootstrap
+    self.run()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "multi_time_merun.py", line 22, in fuc
+    timing_run.merun_v2(fpath,Wpath,str(path))
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/timing_run.py", line 203, in merun_v2
+    mescreen_newbd.mescreen_newbd('%s' % Wpath,'%s' % ObsID)###
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/mescreen_newbd.py", line 281, in mescreen_newbd
+    new_str,new_stp=bkg_gti(Wpath, ObsID, ft)
+TypeError: 'NoneType' object is not iterable
+```
+P030124043001
+```buildoutcfg
+Process Process-13:
+Traceback (most recent call last):
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 267, in _bootstrap
+    self.run()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "multi_time_merun.py", line 22, in fuc
+    timing_run.merun_v2(fpath,Wpath,str(path))
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/timing_run.py", line 246, in merun_v2
+    nbkghesmtpoly2.poly_bkg('%s' % NetWpath,'%s' % Wpath,'%s' % ObsID)
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/nbkghesmtpoly2.py", line 274, in poly_bkg
+    xr2_small,yr2_small,bkg2_small,error2 = get_bkg(slcfile_list[2])
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/nbkghesmtpoly2.py", line 195, in get_bkg
+    tp = frag.min()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/numpy/core/_methods.py", line 32, in _amin
+    return umr_minimum(a, axis, None, out, keepdims, initial)
+ValueError: zero-size array to reduction operation minimum which has no identity
+```
+multi-run bug
+```buildoutcfg
+P040124000201
+P040124000301
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124000201 : No data
+P040124000401
+P040124000501
+P040124000601
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124000301 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124000401 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124000501 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124000601 : No data
+P040124000701
+P040124000801
+P040124000901
+P040124001001
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124000701 : No data
+P040124001101
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124000801 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124000901 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124001001 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124001101 : No data
+P040124001201
+P040124001301
+P040124001401
+P040124001501
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124001201 : No data
+P040124001601
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124001301 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124001401 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124001501 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124001601 : No data
+P040124001701
+P040124001801
+P040124002001
+P040124001901
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124001701 : No data
+P040124002101
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124001801 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124002001 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124001901 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124002101 : No data
+P040124002201
+P040124002301
+P040124002401
+P040124002501
+P040124002601
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124002201 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124002301 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124002401 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124002501 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124002601 : No data
+P040124002701
+P040124002801
+P040124002901
+P040124003001
+P040124003101
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124002701 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124002801 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124002901 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124003001 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124003101 : No data
+P040124003701
+P040124005801
+P040124005901
+P040124006001
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124003701 : No data
+P040124006101
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124005801 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124005901 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124006001 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124006101 : No data
+P040124006201
+P040124006301
+P040124006401
+P040124006501
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124006201 : No data
+P040124006601
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124006301 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124006401 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124006501 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124006601 : No data
+P040124006701
+P040124006801
+P040124006901
+P040124007001
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124006701 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124006801 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124006901 : No data
+/hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124007001 : No data
+```

@@ -114,6 +114,7 @@ def main(h=0, m=0):
 		else:
 			lcpath='/sharefs/hbkg/user/saina/data294/'+obin+'/'
 		'''
+		scan_path = '/sharefs/hbkg/data/SCAN/ME'
 		lcpath = '/sharefs/hbkg/data/SCAN/ME/Net'
 
 		lclist=os.listdir(lcpath)
@@ -122,12 +123,24 @@ def main(h=0, m=0):
 		for i in lclist:
 			if not os.path.exists(lcpath+"/%s/me_lc_box2_small_cut.fits"%(str(i))):
 				lclistre=np.append(lclistre,i)
+		prodlist = []
+		for j in ldatalist:
+			prodfits_flag = os.path.exists(scan_path+"/Prod/%s/%s_FITDATA_ME.fits"%(str(j),str(j)))
+			prodtxt_flag = os.path.exists(scan_path+"/Prod/%s/src_%s.txt"%(str(j),str(j)))
+			if  (prodfits_flag and prodtxt_flag):
+				prodlist = np.append(prodlist,j)
+
 		
 		#ldatalist=ldatalist[:700]
-		mark=np.in1d(ldatalist,lclist,invert=True)
-		ldatalist=np.array(ldatalist)
-		ndatalist=np.r_[ldatalist[mark],lclistre]
+		# print("ldatalist",ldatalist)
+		# mark=np.in1d(ldatalist,lclist,invert=True)
+		# print("lclist",lclist)
+		# print("mark",mark)
+		# ldatalist=np.array(ldatalist)
+		mins = list(set(ldatalist)-set(prodlist))
+		ndatalist=np.r_[mins,lclistre]
 		ndatalist.sort()
+		print("ndatalist",ndatalist)
 		list5=[[]]*int(1+len(ndatalist)/5)
 		for i in range(len(list5)):
 			list5[i]=ndatalist[i*5:(i+1)*5]
