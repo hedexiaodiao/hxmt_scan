@@ -80,7 +80,9 @@ def merun_v2(path, Wpath, ObsID):
 	meevtfile_list = glob.glob(r'%s/%s/%s*/*/*ME-Evt*' % (path, stObsID, ObsID))
 	metempfile_list = glob.glob(r'%s/%s/%s*/*/*ME-TH*' % (path, stObsID, ObsID))
 	orbitfile_list = glob.glob(r'%s/%s/*/*_Orbit_*'%(path,stObsID))
-	ehkfile_list = glob.iglob(r'%s/%s/*/*EHK*'%(path,stObsID))
+	ehk1N_path = "/sharefs/hbkg/user/cwang/ehk"
+	ehkfile_list = glob.iglob(r'%s/ehk%s*'%(ehk1N_path,stObsID[2:]))##/sharefs/hbkg/user/cwang/ehk stObsID[2:]#glob.iglob(r'%s/%s/*/*EHK*'%(path,stObsID))
+	print(ehkfile_list)
 	nattfile_list = glob.iglob(r'%s/%s/*/*_Att_*'%(Npath,stObsID))
 	norbitfile_list = glob.glob(r'%s/%s/*/*_Orbit_*'%(Npath,stObsID))
 	print "%s: files loaded"%stObsID

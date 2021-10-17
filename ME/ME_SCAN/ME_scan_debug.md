@@ -276,3 +276,157 @@ P040124000201
 /hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124000201 : No data
 P040124000301
 ```
+
+###After fix 3 errors in ME_SCAN
+P030124063901、P030124064001
+```buildoutcfg
+P030124064001  : grade end
+rm: cannot remove ‘/sharefs/hbkg/data/SCAN/ME/Org/GTI/P030124064001_me_gti.fits’: No such file or directory
+megtigen tempfile=/hxmt/work/HXMT-DATA/1L/A03/P0301240/P0301240640/P030124064001-20210706-01-01/ME/HXMT_P030124064001_ME-TH_FFFFFF_V1_L1P.FITS ehkfile=/sharefs/hbkg/data/SCAN/ME/Org/EHK/P030124064001_ehk.fits outfile=/sharefs/hbkg/data/SCAN/ME/Org/GTI/P030124064001_gtiv2.fits defaultexpr=NONE expr="ELV>5&&COR>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"
+megtigen : ##############################################
+megtigen : HXMT ME task, megtigen is running
+megtigen : GtiCalc warning: no GTI extension in GTI List!
+megtigen : GtiCalc: Can't create GTI File!
+megtigen : HXMT ME task, megtigen is running unsuccessfully!
+megtigen : ##############################################
+P030124064001  : o-gti & ehk end
+Process Process-22:
+Traceback (most recent call last):
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 267, in _bootstrap
+    self.run()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "multi_time_merun.py", line 22, in fuc
+    timing_run.merun_v2(fpath,Wpath,str(path))
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/timing_run.py", line 197, in merun_v2
+    regti_v2.regti(meevtfile, Wpath, ObsID)###calc total time
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/regti_v2.py", line 22, in regti
+    soft_gti = pf.open(Wgtifile)
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/hdu/hdulist.py", line 148, in fitsopen
+    lazy_load_hdus, **kwargs)
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/hdu/hdulist.py", line 402, in fromfile
+    lazy_load_hdus=lazy_load_hdus, **kwargs)
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/hdu/hdulist.py", line 1040, in _readfrom
+    raise IOError('Empty or corrupt FITS file')
+IOError: Empty or corrupt FITS file
+```
+
+###new
+```buildoutcfg
+megtigen : ##############################################                                            ][43%]
+megtigen : HXMT ME task, megtigen is running
+megtigen : HXMT ME task, megtigen is running successfully!
+megtigen : ##############################################
+P030124013801  : o-gti & ehk end
+Process Process-12:
+Traceback (most recent call last):
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 267, in _bootstrap
+    self.run()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "multi_time_merun.py", line 22, in fuc
+    timing_run.merun_v2(fpath,Wpath,str(path))
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/timing_run.py", line 197, in merun_v2
+    regti_v2.regti(meevtfile, Wpath, ObsID)###calc total time
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/regti_v2.py", line 25, in regti
+    evt_data = evt_all[1].data
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/utils/decorators.py", line 739, in __get__
+    val = self.fget(obj)
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/hdu/table.py", line 350, in data
+    data = self._get_tbdata()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/hdu/table.py", line 155, in _get_tbdata
+    columns = self.columns
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/utils/decorators.py", line 739, in __get__
+    val = self.fget(obj)
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/hdu/table.py", line 346, in columns
+    return self._columns_type(self)
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/column.py", line 1195, in __init__
+    self._init_from_table(input)
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/column.py", line 1259, in _init_from_table
+    for keyword, value in iteritems(hdr):
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/header.py", line 940, in iteritems
+    yield (card.keyword, card.value)
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/card.py", line 285, in value
+    self._value = self._parse_value()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/card.py", line 744, in _parse_value
+    ".verify('fix').".format(self.keyword))
+VerifyError: Unparsable card (OBS_ID), fix it first with .verify('fix').
+```
+
+```buildoutcfg
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/column.py", line 1259, in _init_from_table
+    for keyword, value in iteritems(hdr):
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/header.py", line 940, in iteritems
+    yield (card.keyword, card.value)
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/card.py", line 285, in value
+    self._value = self._parse_value()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/card.py", line 744, in _parse_value
+    ".verify('fix').".format(self.keyword))
+VerifyError: Unparsable card (OBS_ID), fix it first with .verify('fix').
+^CTraceback (most recent call last):########################################                         ][75%]
+  File "multi_time_merun.py", line 174, in <module>
+    main(0,0)
+  File "multi_time_merun.py", line 137, in main
+P030124064001  : grade end
+P030124063901  : grade end
+P030124043001  : grade end
+    doSth(list5,fpath,lcpath)
+  File "multi_time_merun.py", line 38, in doSth
+    p.join()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 148, in join
+    res = self._popen.wait(timeout)
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/forking.py", line 154, in wait
+    return self.poll(0)
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/forking.py", line 135, in poll
+    pid, sts = os.waitpid(self.pid, flag)
+```
+
+```buildoutcfg
+megtigen : ##############################################
+megtigen : GtiCalc warning: no GTI extension in GTI List!
+megtigen : GtiCalc: Can't create GTI File!
+megtigen : HXMT ME task, megtigen is running unsuccessfully!
+megtigen : ##############################################
+P030124063901  : o-gti & ehk end
+P030124043001  : o-gti & ehk end
+Process Process-14:
+Traceback (most recent call last):
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 267, in _bootstrap
+    self.run()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "multi_time_merun.py", line 22, in fuc
+    timing_run.merun_v2(fpath,Wpath,str(path))
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/timing_run.py", line 197, in merun_v2
+    regti_v2.regti(meevtfile, Wpath, ObsID)###calc total time
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/regti_v2.py", line 22, in regti
+    soft_gti = pf.open(Wgtifile)
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/hdu/hdulist.py", line 148, in fitsopen
+    lazy_load_hdus, **kwargs)
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/hdu/hdulist.py", line 402, in fromfile
+    lazy_load_hdus=lazy_load_hdus, **kwargs)
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/astropy/io/fits/hdu/hdulist.py", line 1040, in _readfrom
+    raise IOError('Empty or corrupt FITS file')
+IOError: Empty or corrupt FITS file
+```
+
+```buildoutcfg
+P030124043001 
+Process Process-13:
+Traceback (most recent call last):
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 267, in _bootstrap
+    self.run()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/multiprocessing/process.py", line 114, in run
+    self._target(*self._args, **self._kwargs)
+  File "multi_time_merun.py", line 22, in fuc
+    timing_run.merun_v2(fpath,Wpath,str(path))
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/timing_run.py", line 244, in merun_v2
+    nbkghesmtpoly2.poly_bkg('%s' % NetWpath,'%s' % Wpath,'%s' % ObsID)
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/nbkghesmtpoly2.py", line 274, in poly_bkg
+    xr2_small,yr2_small,bkg2_small,error2 = get_bkg(slcfile_list[2])
+  File "/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc/nbkghesmtpoly2.py", line 195, in get_bkg
+    tp = frag.min()
+  File "/hxmt/soft/Develop/anaconda2/lib/python2.7/site-packages/numpy/core/_methods.py", line 32, in _amin
+    return umr_minimum(a, axis, None, out, keepdims, initial)
+ValueError: zero-size array to reduction operation minimum which has no identity
+```
