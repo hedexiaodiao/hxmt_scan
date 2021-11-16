@@ -604,3 +604,59 @@ P040124007001
 /hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124006901 : No data
 /hxmt/work/HXMT-DATA/1L/A03/P0301240 P040124007001 : No data
 ```
+
+unsuccessful:
+P030124061101
+```
+P0401240001: files loaded
+P0401240001 P040124000101: 1st -- Files error
+P0401240001 P040124000101 can not be calculated: orbit
+P040124000201
+P040124000301
+P040124000401
+P040124000501
+/hxmt/work/HXMT-DATA/1L/A04/P0401240 P040124000201 : New calculation
+/hxmt/work/HXMT-DATA/1L/A04/P0401240 P040124000301 : New calculation
+P040124000601
+/hxmt/work/HXMT-DATA/1L/A04/P0401240 P040124000401 : New calculation
+/hxmt/work/HXMT-DATA/1L/A04/P0401240 P040124000501 : New calculation
+/hxmt/work/HXMT-DATA/1L/A04/P0401240 P040124000601 : New calculation
+/sharefs/hbkg/data/SCAN/ME/Midd/P040124000401/config_me_small.xml
+/sharefs/hbkg/data/SCAN/ME/Midd/P040124000601/config_me_small.xml
+/hxmt/work/HXMT-DATA/1L/A04/P0401240 /sharefs/hbkg/data/SCAN/ME
+/sharefs/hbkg/data/SCAN/ME/Midd/P040124000501/config_me_small.xml
+/sharefs/hbkg/data/SCAN/ME/Midd/P040124000301/config_me_small.xml
+/hxmt/work/HXMT-DATA/1L/A04/P0401240 /sharefs/hbkg/data/SCAN/ME
+/hxmt/work/HXMT-DATA/1L/A04/P0401240 /sharefs/hbkg/data/SCAN/ME
+/hxmt/work/HXMT-DATA/1L/A04/P0401240 /sharefs/hbkg/data/SCAN/ME
+/sharefs/hbkg/data/SCAN/ME/Midd/P040124000201/config_me_small.xml
+/hxmt/work/HXMT-DATA/1L/A04/P0401240 /sharefs/hbkg/data/SCAN/ME
+/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/pfiles_small/pfiles_P040124000301;/home/hxmt/hxmtsoft2/soft/install/x86_64-unknown-linux-gnu-libc2.12/syspfiles
+/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/pfiles_small/pfiles_P040124000401;/home/hxmt/hxmtsoft2/soft/install/x86_64-unknown-linux-gnu-libc2.12/syspfiles
+<generator object iglob at 0x7f69c729c1e0>
+P0401240003: files loaded
+<generator object iglob at 0x7f69c729c1e0>
+P0401240003 P040124000301: 1st -- Files error
+P0401240003 P040124000301 can not be calculated: orbit
+/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/pfiles_small/pfiles_P040124000601;/home/hxmt/hxmtsoft2/soft/install/x86_64-unknown-linux-gnu-libc2.12/syspfiles
+/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/pfiles_small/pfiles_P040124000501;/home/hxmt/hxmtsoft2/soft/install/x86_64-unknown-linux-gnu-libc2.12/syspfiles
+/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/pfiles_small/pfiles_P040124000201;/home/hxmt/hxmtsoft2/soft/install/x86_64-unknown-linux-gnu-libc2.12/syspfiles
+<generator object iglob at 0x7f69c729c1e0>
+P0401240004: files loaded
+<generator object iglob at 0x7f69c729c1e0>
+<generator object iglob at 0x7f69c729c1e0>
+P0401240002: files loaded
+P0401240002 P040124000201: 1st -- Files error
+P0401240002 P040124000201 can not be calculated: orbit
+P0401240004 P040124000401: 1st -- Files error
+P0401240004 P040124000401 can not be calculated: orbit
+P0401240004 P040124000401 1N orbit test
+P0401240006: files loaded
+P0401240005: files loaded
+P0401240006 P040124000601: 1st -- Files error
+P0401240006 P040124000601 can not be calculated: orbit
+P0401240006 P040124000601 1N orbit test
+P0401240005 P040124000501: 1st -- Files error
+P0401240005 P040124000501 can not be calculated: orbit
+P0401240005 P040124000501 1N orbit test
+```

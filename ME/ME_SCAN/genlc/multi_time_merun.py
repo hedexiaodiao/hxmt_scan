@@ -11,6 +11,9 @@ sys.path.append("/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/genlc")
 ###sys.Wpath.append("/sharefs/hbkg/user/saina/tar/P0201013")
 import timing_run
 import write_007xml_index
+import threading
+
+sem = threading.Semaphore(7) ###limit the maximum number of threads to 4
 
 def fuc(path,fpath,lcpath):
 	print str(path)
@@ -183,5 +186,5 @@ def main(h=0, m=0):
 				break
 			time.sleep(1800)
 		
-
-main(0,0)
+with sem:
+	main(0,0)
