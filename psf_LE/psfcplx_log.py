@@ -53,6 +53,10 @@ outfile4 = (outpathstr+outfilestr0+".src")###.encode()
 outfile5 = (outpathstr+outfilestr0)###.encode()#.split("/")[-1]
 print ("the count rate file : ",infile0,infile1,infile2)
 print ("the out put file : ",outfile0,outfile1,outfile2)
+
+outnpy_name = outpathstr+'/Angle_normC'
+outpara_name = outpathstr+'/Para_log.txt'
+print("The result will be generate into:\n",outnpy_name,outpara_name)
 ##############load the hxmtpsf model#################################
 try:
     logFile = Xset.openLog(outfile0)
@@ -163,7 +167,7 @@ nmabs = []
 i=0
 #float('l')
 
-os.system('rm Angle_normC*;rm Para_log.txt;')
+os.system('rm %s*;rm %s;'%(outnpy_name,outpara_name))
 crab_flux = 282
 
 for lcnum in listt:
@@ -187,7 +191,7 @@ for lcnum in listt:
     m1.setPars({i*5+9:"0.,0.1"})
     Fit.perform()
     Fit.error("maximum 150 3.0 1-16")
-    with open('Para_log.txt','a')as f:
+    with open(outpara_name,'a')as f:
         for pa in range(1,17):
             try:
                 print(pa,m1(pa).name,m1(pa).values[0],m1(pa).error[0],m1(pa).error[1],file=f)
@@ -199,7 +203,7 @@ for lcnum in listt:
     m1.setPars({i*5+14:"0.,0.1"})
     Fit.perform()
     Fit.error("maximum 150 3.0 1-16")
-    with open('Para_log.txt','a')as f:
+    with open(outpara_name,'a')as f:
         for pa in range(1,17):
             try:
                 print(pa,m1(pa).name,m1(pa).values[0],m1(pa).error[0],m1(pa).error[1],file=f)
@@ -210,7 +214,7 @@ for lcnum in listt:
     m1.setPars({i*5+11:"0.,0.1"})
     Fit.perform()
     Fit.error("maximum 150 3.0 1-16")
-    with open('Para_log.txt','a')as f:
+    with open(outpara_name,'a')as f:
         for pa in range(1,17):
             try:
                 print(pa,m1(pa).name,m1(pa).values[0],m1(pa).error[0],m1(pa).error[1],file=f)
@@ -223,7 +227,7 @@ for lcnum in listt:
     m1.setPars({16:"%s,-0.1"%crab_flux})
     Fit.perform()
     Fit.error("3.0 15")
-    with open('Para_log.txt','a')as f:
+    with open(outpara_name,'a')as f:
         for pa in range(1,17):
             try:
                 print(pa,m1(pa).name,m1(pa).values[0],m1(pa).error[0],m1(pa).error[1],file=f)
@@ -246,7 +250,7 @@ for lcnum in listt:
     yerr = np.array(yerr)
     yep = (np.abs(alfa)<8)&(np.abs(beta)<2.5)
     lists = np.c_[alfa[yep],beta[yep],norm[yep],yerr[yep],psf[yep]]
-    np.save('Angle_normC_%s.npy'%(lcnum),lists)
+    np.save('%s_%s.npy'%(outnpy_name,lcnum),lists)
     AllModels.clear()
     AllData.clear()
 
