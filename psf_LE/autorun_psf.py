@@ -61,16 +61,22 @@ def count_dir(data_dir):
     return dir_list,i
 
 
-data_dir = './data'
-if len(sys.argv)<2:
-    print("Use the default Instrument LE!")
-    sys.exit(1)
-print(sys.argv[0],sys.argv[1])
-instru = sys.argv[1]
-tree1_dirlist, tree1_tot = count_dir(data_dir)
-for i in range(tree1_tot):
-    tree2_dirlist, tree2_tot = count_dir(tree1_dirlist[i])
-    for j in range(tree2_tot):
-        fits_dir = tree2_dirlist[j]
-        att_list, lc_list = get_fitsname(fits_dir)
-        gen_config(att_list,lc_list,fits_dir,instru=instru)
+if __name__ == "__main__":
+    data_dir = './data'
+    if len(sys.argv)<2:
+        print("Use the default Instrument LE!")
+        instru = 'LE'
+    else:
+        print(sys.argv[0], sys.argv[1])
+        instru = sys.argv[1]
+
+    exec_name = './command_'+instru.lower()+'_'+time.strftime("%y%m%d")+'.sh'
+    if os.path.exists(exec_name):
+        os.system('rm %s'%exec_name)
+    tree1_dirlist, tree1_tot = count_dir(data_dir)
+    for i in range(tree1_tot):
+        tree2_dirlist, tree2_tot = count_dir(tree1_dirlist[i])
+        for j in range(tree2_tot):
+            fits_dir = tree2_dirlist[j]
+            att_list, lc_list = get_fitsname(fits_dir)
+            gen_config(att_list,lc_list,fits_dir,instru=instru)

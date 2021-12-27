@@ -1,3 +1,4 @@
 #!/bin/bash
 source /sharefs/hbkg/user/luoqi/home/mypython
-python /sharefs/hbkg/user/luoqi/GRB/work/ihep4/psf_project/psfcplx_log.py ${1}
+scriptDir=$(cd $(dirname -- $0); pwd)
+python ${scriptDir}/psfcplx_log.py ${1}
