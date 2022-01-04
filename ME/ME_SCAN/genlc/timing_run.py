@@ -80,7 +80,9 @@ def merun_v2(path, Wpath, ObsID):
 	meevtfile_list = glob.glob(r'%s/%s/%s*/*/*ME-Evt*' % (path, stObsID, ObsID))
 	metempfile_list = glob.glob(r'%s/%s/%s*/*/*ME-TH*' % (path, stObsID, ObsID))
 	orbitfile_list = glob.glob(r'%s/%s/*/*_Orbit_*'%(path,stObsID))
-	ehkfile_list = glob.iglob(r'%s/%s/*/*EHK*'%(path,stObsID))
+	ehk1N_path = "/sharefs/hbkg/user/cwang/ehk"
+	ehkfile_list = glob.iglob(r'%s/ehk%s*'%(ehk1N_path,stObsID[2:]))##/sharefs/hbkg/user/cwang/ehk stObsID[2:]#glob.iglob(r'%s/%s/*/*EHK*'%(path,stObsID))
+	print(ehkfile_list)
 	nattfile_list = glob.iglob(r'%s/%s/*/*_Att_*'%(Npath,stObsID))
 	norbitfile_list = glob.glob(r'%s/%s/*/*_Orbit_*'%(Npath,stObsID))
 	print "%s: files loaded"%stObsID
@@ -169,10 +171,13 @@ def merun_v2(path, Wpath, ObsID):
 	#####################run the script of hxmtsoft###################################################################
 	print ObsID
 	if 1:###not os.path.exists(Wpifile):
-		os.system('mepical evtfile=%s tempfile=%s outfile=%s' % (meevtfile, metempfile, Wpifile))
+		cmd = 'mepical evtfile=%s tempfile=%s outfile=%s' % (meevtfile, metempfile, Wpifile)
+		print(cmd)
+		os.system(cmd)
 		print ObsID, " : pi end"
 	if 1:###not os.path.exists(Wdeadfile):
-		os.system('megrade evtfile=%s outfile=%s deadfile=%s binsize=1' % (Wpifile, Wgradefile, Wdeadfile))
+		cmd = 'megrade evtfile=%s outfile=%s deadfile=%s binsize=1' % (Wpifile, Wgradefile, Wdeadfile)
+		os.system(cmd)
 		print ObsID, " : grade end"
 
 	os.system("cp %s %s" % (ehkfile, Wehkfile))
@@ -180,8 +185,11 @@ def merun_v2(path, Wpath, ObsID):
 	os.system('rm %s' % (Wme_gtifile))
 	if 1:###not os.path.exists(Wgtifile):###----maybe need flag5, hxmtehkgen
 		#if flag5!=1:
-			#os.system("cp %s %s/%s/ehk.fits"%(ehkfile,Wpath,ObsID))
-		os.system('megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=NONE expr="ELV>5&&COR>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"' % (metempfile, Wehkfile, Wgtifile))
+			#os.system("cp %s %s/%s/ehk.fits"%(ehkfile,Wpath,ObsID))#######after SAA_FLAG###SUN_ANG>=10&&MOON_ANG>=5&&
+		cmd = 'megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=NONE expr="ELV>5&&COR>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"' % (
+		metempfile, Wehkfile, Wgtifile)
+		print(cmd)
+		os.system(cmd)
 			#os.system('hxmtehkgen orbfile=%s attfile=%s outfile=%s/%s/ehk.fits step_sec=0.25 leapfile=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/refdata/leapsec.fits rigidity=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/refdata/rigidity_20060421.fits saafile=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/SAA/SAA.fits'%(orbitfile,attfile,Wpath,ObsID))
 			#os.system('megtigen tempfile=%s ehkfile=%s/%s/ehk.fits outfile=%s/%s/ME/gtiv2.fits defaultexpr=NONE expr="ELV>5&&COR3>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"'%(metempfile,Wpath,ObsID,Wpath,ObsID))
 		#else:
@@ -196,7 +204,9 @@ def merun_v2(path, Wpath, ObsID):
 		print ObsID, " : bd end"
 
 	if 1:###not os.path.exists(Wscreenfile):
-		os.system('mescreen evtfile=%s gtifile=%s outfile=%s baddetfile=%s userdetid="0-53"' % (Wgradefile, Wme_gtifile, Wscreenfile, Wbaddetfile))
+		cmd = 'mescreen evtfile=%s gtifile=%s outfile=%s baddetfile=%s userdetid="0-53"' % (Wgradefile, Wme_gtifile, Wscreenfile, Wbaddetfile)
+		print(cmd)
+		os.system(cmd)
 		print ObsID, " : screen end"
 	#os.system('mescreen evtfile=%s/%s/ME/me_grade.fits gtifile=%s/%s/ME/me_gti.fits outfile=%s/%s/ME/me_screen.fits baddetfile=${HEADAS}/refdata/medetectorstatus.fits userdetid="0-53"'%(Wpath,ObsID,Wpath,ObsID,Wpath,ObsID))
 	me_lc_cmd = '''for box in 0 1 2; do

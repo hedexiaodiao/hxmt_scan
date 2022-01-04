@@ -1,3 +1,4 @@
 #!/bin/bash
 source /sharefs/hbkg/user/luoqi/home/mypython
-python /sharefs/hbkg/user/luoqi/HXMT_SCAN/HE/HXMT_GPS_Program/genlc_module.py ${1}
+scriptDir=$(cd $(dirname -- $0); pwd)
+python ${scriptDir}/genlc_module.py ${1}

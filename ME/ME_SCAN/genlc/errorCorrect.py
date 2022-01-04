@@ -43,6 +43,7 @@ def errorCorrect(Wpath, ObsID):
 	'''os.system(me_lc_cmd)
 	os.system('rm -r %s/pfiles_%s'%(Ppath,ObsID))'''
 	slcfile_list=glob.glob(r'%s/%s/*small_g0*.lc' % (NetWpath, ObsID))
+	print("slcfile_list:",slcfile_list)
 	blcfile_list=glob.glob(r'%s/%s/*blind_g0*.lc' % (NetWpath, ObsID))
 	#selc_list=glob.glob(r'%s/%s/*/*smallErr_g0*.lc'%(Wpath,ObsID))
 	#belc_list=glob.glob(r'%s/%s/*/*blindErr_g0*.lc'%(Wpath,ObsID))

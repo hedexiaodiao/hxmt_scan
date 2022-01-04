@@ -593,10 +593,15 @@ def lcfit(cfg,program_tree,scan_tree,time1,Analogfile,MidductPath):
     outpathstr = readcfg.getTagText("outpath")
     print(inpathstr, infilestr, outpathstr)
     inpathstr = inpathstr.strip()
+    infilestr0 =  infilestr.split()[0]
     infilestr3 = infilestr.split()[3]
+    infile0 = (inpathstr + infilestr0)
     infile3 = (inpathstr + infilestr3)  # .encode()
+    need_pathhead = ''
+    for i in range(len(infile0.split("/")) - 3):
+        need_pathhead += infile0.split("/")[i] + '/'
     ObsID = infile3.split("/")[-1][:13]
-    fProd_obspath = scan_tree + '/HE/Prod/' + ObsID  ###
+    fProd_obspath = need_pathhead + 'Prod/' + ObsID  ###
     mkdir_try(fProd_obspath)
     os.system('cp src_P*.txt %s/src_%s.txt'%(fProd_obspath,ObsID))
     os.system('python %s/HXMT_GPS_Program/Fit_Info.py %s'%(program_tree,cfg))

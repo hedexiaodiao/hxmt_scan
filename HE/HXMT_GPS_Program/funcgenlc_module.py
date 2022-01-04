@@ -31,7 +31,7 @@ def mkdir_try(dirname):
 def genlc(ELV, DYE_ELV, COR, T_SAA, TN_SAA, SUN_ANGLE, MOON_ANGLE, ANG_DIST,ehkfile,lcfile, lcblind, lcpath, netlcpath,alllcfile,nodeadlc,minpi, maxpi,filestr):
     evtfile,tpfile,attfile,dtfile,hvfile,pmfile,ortehkfile = FindLC_basefile(ObsID, fpath, INST='HE', EHKFILE=OrgEhkTerms)
     ############################################################################################
-
+    webProd_path = '/hxmt/work/HXMT_scan_data/src_list/HE'
     print(evtfile)
     print(attfile)
 
@@ -329,6 +329,8 @@ def genlc(ELV, DYE_ELV, COR, T_SAA, TN_SAA, SUN_ANGLE, MOON_ANGLE, ANG_DIST,ehkf
         with open(program_tree + '/gps_mission/grb_genlc_success.txt', 'a+') as f:
             print(ObsID, file=f)
     else:###Normal mode
+        fProd_obspath = scan_tree + '/HE/Prod/' + ObsID  ###
+        os.system('cp %s/src_%s.txt %s/src_%s.txt' % (fProd_obspath,ObsID,webProd_path, ObsID))
         with open(program_tree + '/gps_mission/genlc_success.txt', 'a+') as f:
             print(ObsID, file=f)
         with open(program_tree + '/gps_mission/lcfit_misson.sh', 'a+') as f:
