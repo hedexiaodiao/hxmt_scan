@@ -17,6 +17,7 @@ def mkdir_try(dirname):
             print('Wrong with make dir:\n'+dirname)
 
 def dataout(Wpath, ObsID):
+	webProd_path = '/hxmt/work/HXMT_scan_data/src_list/ME'
 	Program_dir = '/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN'
 	#path = Wpath
 	Midd_obspath = Wpath + '/Midd/' + ObsID  ###
@@ -71,6 +72,7 @@ def dataout(Wpath, ObsID):
 	f.close()
 	mkdir_try(fProd_obspath)
 	os.system('cp %s/src_%s.txt %s/src_%s.txt'% (Midd_obspath, ObsID, fProd_obspath, ObsID))
+	os.system('cp %s/src_%s.txt %s/src_%s.txt' % (Midd_obspath, ObsID, webProd_path, ObsID))
 	###after should copy#os.system('cp %s/src_ME/src_%s.txt /hxmt/work/HXMT_scan_data/src_list/ME/' % (Program_dir,ObsID))
 
 if __name__ == "__main__":
