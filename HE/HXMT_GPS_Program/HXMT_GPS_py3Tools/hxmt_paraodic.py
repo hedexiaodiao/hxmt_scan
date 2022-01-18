@@ -150,7 +150,7 @@ def Cal_psf(parameter):
     PI=3.14159265358979323846
     flag=parameter[0]
     roll=parameter[1]/180.0*PI
-    roll_indx = int(-parameter[1]/60+1)
+    roll_indx = int(-parameter[1]/60+1)###index of box
     r_degree=parameter[1]
     ra=parameter[2]
     dec=parameter[3]
