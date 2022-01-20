@@ -7,9 +7,11 @@ import time
 import sys
 import Quat as quat
 #from testroll import *
-import testroll 
+import testroll
+from xml.etree.ElementTree import ElementTree,Element
 
 '''
+很多峰是从区间外扫过去的，因此保留的峰数可能远小于输入的峰数。
 To calibrate PSF with Crab in FOV alpha<0.8, beta<0.8.
 No need to distinguish 3 box.
 #  Crab, ra = 83.633, dec = 22.014
@@ -21,6 +23,7 @@ No need to distinguish 3 box.
 4. merge time for use 
 '''
 
+dir_front = '/sharefs/hbkg/user/luoqi/psfl'
 
 if len(sys.argv)<2:
     print("Need the config file!")
@@ -29,10 +32,39 @@ if len(sys.argv)<2:
 else:
     cfg = sys.argv[1]
 
-try:
-    para_type = sys.argv[2]
-except:
-    para_type = 'all'
+year = sys.argv[2]
+
+if len(sys.argv)==4:
+    select_box_dex = int(sys.argv[3])
+else:
+    select_box_dex = 0
+
+#---------------make config------------------------#
+def gen_config(att_list,lc_list,fits_dir,xmlpath='./config_le.xml',instru='LE'):
+    exec_name = './command_'+instru.lower()+'_'+time.strftime("%y%m%d")+'.sh'
+
+    tree = ElementTree()
+    tree.parse(xmlpath)
+    pathnodes = tree.findall("PATH/outpath")
+    outnodes = tree.findall("Outfile_Name/outfilename")
+    filenodes = tree.findall("Infile_Name/infilename/infilenamelist")
+    instrunodes = tree.findall("Inst_Info/Instrument")
+    outfile = fits_dir + "/config_%s.xml"%(instru.lower())
+    print(outfile)
+    filenodes[0].text = "\n  " + lc_list[0]+" \n"
+    filenodes[1].text = "\n  " + lc_list[1]+" \n"
+    filenodes[2].text = "\n  " + lc_list[2]+" \n"
+    filenodes[3].text = '\n  ' + att_list[0] + ' \n'
+    pathnodes[0].text = '\n  ' + fits_dir + '  \n'
+    instrunodes[0].text = '\n ' +instru + ' \n'
+    outnodes[0].text = '\n '+'/GAL_he_small \n'
+
+    tree.write(outfile, encoding="utf-8", xml_declaration=True)
+    with open(exec_name,'a+')as f:
+        try:
+            print('sh ./sub_task_psf.sh %s'%(outfile),file=f)
+        except:
+            print('cannot write down command!!!')
 
 #---------------------load file-  -------------#
 readcfg = loadDom(cfg)
@@ -41,11 +73,20 @@ inpathstr = readcfg.getTagText("inpath")
 instr = readcfg.getTagText("Instrument")
 #print inpathstr,infilestr
 inpathstr = inpathstr.strip()
-evtfilestr = infilestr.split()[0]
+evtfilestr0 = infilestr.split()[0]
+evtfilestr1 = infilestr.split()[1]
+evtfilestr2 = infilestr.split()[2]
 infilestr2 = infilestr.split()[-1]
 infile = (inpathstr+infilestr2)
-evtfile = (inpathstr+evtfilestr)
+evtfile0 = (inpathstr+evtfilestr0)
+evtfile1 = (inpathstr+evtfilestr1)
+evtfile2 = (inpathstr+evtfilestr2)
+evtfile_list = [evtfile0,evtfile1,evtfile2]
+
+evtfile = evtfile_list[select_box_dex]
+
 print ("the scanning pointing file : ",infile)
+print("the lc file :", evtfile_list)
 instr = instr.strip()
 instr = instr.split()[0]
 instr = instr#.encode()
@@ -74,7 +115,7 @@ alpha_lim = 0.8
 beta_lim = 0.8
 
 box_roll = [-60,0,60]
-roll=box_roll[1]/180.0*np.pi
+roll=box_roll[select_box_dex]/180.0*np.pi
 roll_indx = int(-box_roll[1]/60+1)
 
 #--------------------read fits-----------------#
@@ -128,21 +169,50 @@ for i in range(0,q1_list.shape[0]):
     ###cosz = np.sqrt(zr ** 2 / (xr ** 2 + yr ** 2 + zr ** 2))
     delta_alfa = fabs(delta_alfa0 * cos(roll) - delta_beta0 * sin(roll))
     delta_beta = fabs(delta_alfa0 * sin(roll) + delta_beta0 * cos(roll))
-    if delta_alfa<0.8 and delta_beta<0.8:
+    if delta_alfa<alpha_lim and delta_beta<beta_lim:
         accept_dex.append(i)
         accept_time.append(lctime[i])
 
 merge_scal = 5
 tem_accept_time = np.append([0],accept_time[1:])
-gti_condi = np.greater(accept_time-tem_accept_time, 5)
+gti_condi = np.greater(accept_time-tem_accept_time, merge_scal)
+accept_time = np.array(accept_time)
 gti_time_up = accept_time[gti_condi]
 if len(gti_time_up)>1:
     gti_time_down = np.append(gti_time_up[1:],accept_time[-1])
 elif len(gti_time_up)==1:
-    gti_time_down = accept_time[-1]
+    gti_time_down = np.array([accept_time[-1]])
 else:
     print("No accept god time interval!!")
 
 print(gti_time_up,'\n',gti_time_down)
 ###todo:直接保留time、att、lc文件写入fits便可，无须整理gti
 
+lc_list = []
+for j in range(3):
+    boxfile = pf.open('%s' % (evtfile_list[j]))
+    t = boxfile[1].data.field('Time')
+    cts = boxfile[1].data.field('Counts')
+    err = boxfile[1].data.field('error')
+    bkg = boxfile[1].data.field('bkg')
+    mask = np.in1d(t, accept_time)
+    print("before select:",len(t))
+    print("after select:",len(accept_time))
+    col1 = pf.Column(name='Time', format='D', array=t[mask])
+    col2 = pf.Column(name='counts', format='D', array=cts[mask])
+    col3 = pf.Column(name='error', format='D', array=err[mask])
+    col4 = pf.Column(name='bkg', format='D', array=bkg[mask])
+    cols1 = pf.ColDefs([col1, col2, col3, col4])
+    col1 = pf.Column(name='TSTART', format='D', array=gti_time_up)
+    col2 = pf.Column(name='TSTOP', format='D', array=gti_time_down)
+    cols2 = pf.ColDefs([col1, col2])
+    tbhdu1 = pf.BinTableHDU.from_columns(cols1, name='bkg')
+    tbhdu2 = pf.BinTableHDU.from_columns(cols2, name='GTI')
+    prihdu = pf.PrimaryHDU()
+    tbhdulist = pf.HDUList([prihdu, tbhdu1, tbhdu2])
+    lc_file = '%s/new%s_%s_box%s.fits' % (dir_front,instr, year, j)
+    tbhdulist.writeto(lc_file, clobber=True)
+    lc_list.append(lc_file)
+
+att_list = [infile]
+gen_config(att_list,lc_list,dir_front)
