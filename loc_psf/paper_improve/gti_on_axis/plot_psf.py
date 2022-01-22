@@ -1,4 +1,4 @@
-from xspec import *
+##from xspec import *
 from math import *
 import numpy as np
 from astropy.io import fits as pf
@@ -11,7 +11,7 @@ import testroll
 import matplotlib.pyplot as plt
 from matplotlib import cm
 
-instr = "LE"
+instr = "ME"
 #instr = instr.strip()
 #instr = instr.split()[0]
 #instr = instr.encode()
@@ -40,7 +40,10 @@ print("The instrment and the bound :",instr, Talfa_bound, Tbeta_bound)
 #paras = np.loadtxt('/hxmt/work/HXMT_scan_data/psfcrt/psf_201811/Parabolic_%s_18.txt'%instr)
 ###paras = np.loadtxt('./Parabolic_%s_%s_201904.txt'%(instr,str(2018)))
 def psf(Astr):
-    paras = np.loadtxt('./Parabolic_%s_%s_210825.txt'%(instr,str(Astr)))
+    paras = np.loadtxt('./Parabolic_%s_%s_2201.txt'%(instr,str(2019)))
+    #paras = np.loadtxt('./Parabolic_%s_%s_192201.txt' % (instr, str(1_6)))
+    #paras = np.loadtxt('./Parabolic_%s_%s_192201.txt' % (instr, str(2_6)))
+    #paras = np.loadtxt('./Parabolic_%s_%s_201904.txt' % (instr, str(2018)))
     #paras = np.loadtxt('/sharefs/hbkg/data/SCAN/PSF/psf_201904/Parabolic_LE_2018_201904.txt')
     
     Tpsai=paras[::9,0]
@@ -51,11 +54,11 @@ def psf(Astr):
     Tpa,Tpb,Tpc,Tpd = paras[5::9,0],paras[6::9,0],paras[7::9,0],paras[8::9,0]
     print(Tpsai,Tpc)
     
-    def stand_psfmodel(delta_alfa0, delta_beta0, box_dex=0):
+    def stand_psfmodel(delta_alfa0, delta_beta0, box_dex=1):
         PI=3.14159265358979323846
         roll_indx = box_dex#int(-parameter[1]/60+1)###用以确定机箱
-        alfa_bound = np.abs(Talfa_bound + 0)#abound[roll_indx]
-        beta_bound = np.abs(Tbeta_bound + 0)#bbound[roll_indx]
+        alfa_bound = abound[roll_indx]###np.abs(Talfa_bound + 0)#abound[roll_indx]
+        beta_bound = bbound[roll_indx]###np.abs(Tbeta_bound + 0)#bbound[roll_indx]
         delta_alfa = np.abs(delta_alfa0)
         delta_beta = np.abs(delta_beta0)
         condi = np.logical_and(delta_alfa<alfa_bound,delta_beta<beta_bound)
@@ -68,6 +71,9 @@ def psf(Astr):
         return factor
     
     def vec_dot(a,b):
+        print('a.shape, b.shape:',a.shape,b.shape)
+        #c = np.dot(a,b)
+        #'''
         if len(b.shape) ==3:
             c = np.zeros_like(b)
             for i in range(a.shape[0]):
@@ -76,12 +82,13 @@ def psf(Astr):
                         c[i,m,n] = np.sum(a[i,:]*b[:,m,n])
         elif len(b.shape) == 1:
             c = np.dot(a,b)
+        #'''
         return c
     
     def tp_quat2delta2(dcm_b_f,xyz,dcm_b_f_rot):
         xyz = np.array(xyz)
         vec_rot = vec_dot(dcm_b_f_rot, xyz)
-        vec_f = vec_rot#vec_dot(dcm_b_f, vec_rot)###原因在于我画图这里一开始就用的统一xyz坐标，而星上坐标定义和alpha、beta不是同一坐标
+        vec_f = vec_dot(dcm_b_f, vec_rot)###原因在于我画图这里一开始就用的统一xyz坐标，而星上坐标定义和alpha、beta不是同一坐标
         alpha = np.arctan(vec_f[0,:,:]/vec_f[2,:,:])*180/np.pi
         beta = np.arctan(vec_f[1,:,:]/vec_f[2,:,:])*180/np.pi
         return alpha,beta,vec_f[0,:,:],vec_f[1,:,:],vec_f[2,:,:]
@@ -107,10 +114,12 @@ def psf(Astr):
         y = z*tb
         return x, y, z
         
-    def correct_psfmodel(delta_alfa0, delta_beta0, box_dex=0):
+    def correct_psfmodel(delta_alfa0, delta_beta0, box_dex=1):
         PI = 3.14159265358979323846
         #flag = parameter[0]
-        roll = 0#parameter[1] / 180.0 * PI
+        #roll = 0#parameter[1] / 180.0 * PI
+        fov_roll = (1 - box_dex)*60
+        roll = fov_roll / 180.0 * PI
         roll_indx = box_dex#int(-parameter[1] / 60 + 1)
         #r_degree = parameter[1]
         psai = Tpsai[roll_indx]
@@ -121,12 +130,17 @@ def psf(Astr):
         pa, pb, pc, pd = Tpa[roll_indx], Tpb[roll_indx], Tpc[roll_indx], Tpd[roll_indx]
     
         rot_quat = quat.Quat((psai, theta, phi))
-        x, y, z = ab2xyz(np.deg2rad(delta_alfa0), np.deg2rad(delta_beta0))#testroll.sph2cart(ra * pi / 180, dec * pi / 180, 1)
+        #x, y, z = ab2xyz(np.deg2rad(delta_alfa0), np.deg2rad(delta_beta0))
+        #'''
+        x, y, z = ab2xyz(delta_alfa0*np.pi/180, delta_beta0*np.pi/180)#testroll.sph2cart(ra * pi / 180, dec * pi / 180, 1)
         xyz = [x, y, z]
-        dcm_b_f_rot = rot_quat.transform.T
-        delta_alfa0, delta_beta0, xr, yr, zr = tp_quat2delta2(dcm_b_f, xyz, dcm_b_f_rot)
-        delta_alfa = np.abs(delta_alfa0)#np.abs(delta_alfa0 * np.cos(roll) - delta_beta0 * np.sin(roll))
-        delta_beta = np.abs(delta_beta0)#np.abs(delta_alfa0 * np.sin(roll) + delta_beta0 * np.cos(roll))
+        print('xyz:',xyz)
+        #dcm_b_f_rot = rot_quat.transform.T
+        #delta_alfa0, delta_beta0, xr, yr, zr = tp_quat2delta2(dcm_b_f, xyz, dcm_b_f_rot)
+        delta_alfa = np.abs(delta_alfa0 * np.cos(roll) - delta_beta0 * np.sin(roll))#np.abs(delta_alfa0)#
+        delta_beta = np.abs(delta_alfa0 * np.sin(roll) + delta_beta0 * np.cos(roll))#np.abs(delta_beta0)#
+        print(delta_alfa0, delta_beta0)
+        #'''
         condi = np.logical_and(delta_alfa < alfa_bound, delta_beta < beta_bound)
         factor=np.where(condi, (1.0 - np.tan(delta_alfa / 180.0 * PI) / np.tan(alfa_bound / 180.0 * PI)) * \
                      (1.0 - np.tan(delta_beta / 180.0 * PI) / np.tan(beta_bound / 180.0 * PI)),np.zeros_like(delta_alfa))
@@ -175,9 +189,13 @@ def psf(Astr):
     plot_delta(Astr)
     return correct_psf
 
+#####
+#'''
 Astr = 'A02'
 correct_psf = psf(Astr)
-np.save('LE_{:s}_psf'.format(Astr),correct_psf)
+np.save('newME_{:s}_psf'.format(Astr),correct_psf)
+#'''
+#####
 '''
 for Astr in ['A01','A02','A03']:
     correct_psf = psf(Astr)
@@ -187,8 +205,8 @@ for Astr in ['A01','A02','A03']:
 def plot_AA_delta(Z0,Z1,Astr0,Astr1):
     fig = plt.figure(figsize=plt.figaspect(0.5))
     ax = fig.add_subplot(1, 1, 1)  # , projection='3d')
-    alpha = np.arange(-5.7, 5.7, 0.001)
-    beta = np.arange(-1.1, 1.1, 0.001)
+    alpha = np.arange(-Talfa_bound, Talfa_bound, 0.1)
+    beta = np.arange(-Tbeta_bound, Tbeta_bound, 0.1)
     alpha, beta = np.meshgrid(alpha, beta)
     cmap = cm.coolwarm
     surf = ax.contourf(alpha, beta, Z0 - Z1,cmap=cmap)  # , rstride=1, cstride=1, cmap=cm.coolwarm,
@@ -203,3 +221,13 @@ plot_AA_delta(A01_crt_psf,A02_crt_psf,'A01','A02')
 plot_AA_delta(A01_crt_psf,A03_crt_psf,'A01','A03')
 plot_AA_delta(A02_crt_psf,A03_crt_psf,'A02','A03')
 '''###
+
+'''
+A02LE_psf = np.load('LE_A02_psf.npy')
+A02LE_new_psf = np.load('newLE_A02_psf.npy')
+plot_AA_delta(A02LE_psf,A02LE_new_psf,'LEold','LEnew')
+
+A02ME_psf = np.load('ME_A02_psf.npy')
+A02ME_new_psf = np.load('newME_A02_psf.npy')
+plot_AA_delta(A02ME_psf,A02ME_new_psf,'MEold','MEnew')
+'''

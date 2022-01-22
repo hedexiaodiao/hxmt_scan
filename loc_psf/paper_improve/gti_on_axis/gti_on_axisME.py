@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use("agg")
 from xspec import *
 from math import *
 import numpy as np
@@ -9,6 +11,7 @@ import Quat as quat
 #from testroll import *
 import testroll
 from xml.etree.ElementTree import ElementTree,Element
+import matplotlib.pyplot as plt
 
 '''
 To calibrate PSF with Crab in FOV alpha<0.8, beta<0.8.
@@ -160,6 +163,8 @@ del atthd,lchd
 mtx_list= []
 accept_dex = []
 accept_time = []
+accept_alpha = []
+accept_beta = []
 for i in range(0,q1_list.shape[0]):
     quat1 = [q1_list[i],q2_list[i],q3_list[i]]
     mtx = testroll.quat2mtx(quat1)
@@ -171,12 +176,14 @@ for i in range(0,q1_list.shape[0]):
     if delta_alfa<alpha_lim and delta_beta<beta_lim:
         accept_dex.append(i)
         accept_time.append(lctime[i])
+        accept_alpha.append(delta_alfa0)
+        accept_beta.append(delta_beta0)
 
 print(accept_time,len(accept_time))
 merge_scal = 5
 tem_accept_time = np.append([0],accept_time[:-1])
 print(tem_accept_time,len(tem_accept_time))
-gti_condi = np.greater(accept_time-tem_accept_time, 5)
+gti_condi = np.greater(accept_time-tem_accept_time, merge_scal)
 print(gti_condi,len(gti_condi),np.sum(gti_condi))
 accept_time = np.array(accept_time)
 gti_time_up = accept_time[gti_condi]
@@ -218,3 +225,9 @@ for j in range(3):
 
 att_list = [infile]
 gen_config(att_list,lc_list,dir_front)
+
+
+fig = plt.figure(figsize=plt.figaspect(0.5))
+ax = fig.add_subplot(1, 1, 1)  # , projection='3d')
+plt.plot(np.array(accept_alpha), np.array(accept_beta),"*")
+fig.savefig('%s_data_position.png'%(instr))
