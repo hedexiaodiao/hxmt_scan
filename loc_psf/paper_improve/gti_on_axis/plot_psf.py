@@ -54,7 +54,7 @@ def psf(Astr):
     Tpa,Tpb,Tpc,Tpd = paras[5::9,0],paras[6::9,0],paras[7::9,0],paras[8::9,0]
     print(Tpsai,Tpc)
     
-    def stand_psfmodel(delta_alfa0, delta_beta0, box_dex=1):
+    def stand_psfmodel(delta_alfa0, delta_beta0, box_dex=0):
         PI=3.14159265358979323846
         roll_indx = box_dex#int(-parameter[1]/60+1)###用以确定机箱
         alfa_bound = abound[roll_indx]###np.abs(Talfa_bound + 0)#abound[roll_indx]
@@ -114,7 +114,7 @@ def psf(Astr):
         y = z*tb
         return x, y, z
         
-    def correct_psfmodel(delta_alfa0, delta_beta0, box_dex=1):
+    def correct_psfmodel(delta_alfa0, delta_beta0, box_dex=0):
         PI = 3.14159265358979323846
         #flag = parameter[0]
         #roll = 0#parameter[1] / 180.0 * PI
@@ -137,8 +137,8 @@ def psf(Astr):
         print('xyz:',xyz)
         #dcm_b_f_rot = rot_quat.transform.T
         #delta_alfa0, delta_beta0, xr, yr, zr = tp_quat2delta2(dcm_b_f, xyz, dcm_b_f_rot)
-        delta_alfa = np.abs(delta_alfa0 * np.cos(roll) - delta_beta0 * np.sin(roll))#np.abs(delta_alfa0)#
-        delta_beta = np.abs(delta_alfa0 * np.sin(roll) + delta_beta0 * np.cos(roll))#np.abs(delta_beta0)#
+        delta_alfa = np.abs(delta_alfa0)#np.abs(delta_alfa0 * np.cos(roll) - delta_beta0 * np.sin(roll))#
+        delta_beta = np.abs(delta_beta0)#np.abs(delta_alfa0 * np.sin(roll) + delta_beta0 * np.cos(roll))#
         print(delta_alfa0, delta_beta0)
         #'''
         condi = np.logical_and(delta_alfa < alfa_bound, delta_beta < beta_bound)
@@ -190,11 +190,11 @@ def psf(Astr):
     return correct_psf
 
 #####
-#'''
+'''
 Astr = 'A02'
 correct_psf = psf(Astr)
 np.save('newME_{:s}_psf'.format(Astr),correct_psf)
-#'''
+'''
 #####
 '''
 for Astr in ['A01','A02','A03']:
@@ -231,3 +231,8 @@ A02ME_psf = np.load('ME_A02_psf.npy')
 A02ME_new_psf = np.load('newME_A02_psf.npy')
 plot_AA_delta(A02ME_psf,A02ME_new_psf,'MEold','MEnew')
 '''
+#'''
+A02ME_psf = np.load('ME_A02_psf.npy')
+A02ME_new_psf = np.load('newME_A02_psf.npy')
+plot_AA_delta(A02ME_psf,A02ME_new_psf,'MEold','MEnew')
+#'''

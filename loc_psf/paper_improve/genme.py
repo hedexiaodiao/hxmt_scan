@@ -15,6 +15,8 @@ def mkdir_try(dirname):
         except OSError:
             print('Wrong with make dir:\n'+dirname)
 
+###发现bug：mescreen出问题的话，手动运行一遍逐个输入文件可能就好了，猜测可能与总命令的字符串长度有关系
+
 obsid = sys.argv[1]
 pfile = "/sharefs/hbkg/user/luoqi/HXMT_SCAN/loc_psf/pfiles/me%s"%str(obsid)
 os.system('mkdir %s'%pfile);os.system("rm %s/*"%pfile);
@@ -28,19 +30,21 @@ basedatapath = '/hxmt/work/HXMT-DATA/1L/'+"A%s/%s/%s/"%(obsid[1:3],obsid[:8],obs
 datapath = glob.glob(basedatapath+obsid+'-*')[0]
 basefile = get_rawdata(datapath, instrument="ME")
 
-outpath = '/sharefs/hbkg/data/SCAN/luoqi/ME_data/'
+outpath = '/sharefs/hbkg/user/luoqi/psfl/genlc/7_40/'#'/sharefs/hbkg/data/SCAN/luoqi/ME_data/7_40/'
 pipath = outpath + 'pi'
 grdpath = outpath + 'grd'
 gtipath = outpath + 'gti'
 screenpath = outpath + 'screen'
 lcpath = outpath + 'lc'
 attpath = outpath +'att'
+specpath = outpath + 'spec'
 mkdir_try(pipath)
 mkdir_try(grdpath)
 mkdir_try(gtipath)
 mkdir_try(screenpath)
 mkdir_try(lcpath)
 mkdir_try(attpath)
+mkdir_try(specpath)
 
 pifile = outpath + 'pi/%smepi.fits'%obsid
 grdfile = outpath + 'grd/%smegrd.fits'%obsid
@@ -49,6 +53,10 @@ gtifile = outpath + 'gti/%smegti.fits'%obsid
 newgtifile = outpath + 'gti/%smegtinew.fits'%obsid
 newbdfile = outpath + 'gti/%smebd.fits'%obsid
 screenfile = outpath + 'screen/%smescreen.fits'%obsid
+specfile = outpath + 'spec/%smespec'%obsid
+specnametxt =  outpath + 'spec/%smespec.txt'%obsid
+specbkgfile = outpath + 'spec/%sbkgspec'%obsid
+rspfile = outpath + 'spec/%srsp'%obsid
 lcfile = outpath + 'lc/%sme'%obsid
 lcnametxt = outpath + 'lc/%smelc.txt'%obsid
 bkgfile = outpath + 'lc/%smebkg'%obsid
@@ -73,7 +81,7 @@ newbdfile = outpath + 'gti/mebadall.fits'
 
 if not os.path.exists(screenfile):
     cmd +=' ;mescreen evtfile=%s gtifile=%s outfile=%s baddetfile=%s userdetid="0-53"'%(grdfile,gtifile,screenfile,newbdfile)
-
+print(cmd)
 os.system(cmdinit + cmd)
 #plt.switch_backend('tkagg')
 '''
@@ -98,15 +106,31 @@ try:
 except:
     pass
 
+start_list = [259271900,259271965,259271865,259271995]
+stop_list = [259271940,259271995,259271900,259272020]
+startm = start_list[3]
+stoptm = stop_list[3]
+'''
 startm = int(thd[2].data.field(0)[0])+1
 stoptm = int(thd[2].data.field(1)[-1])-1
+'''
 
 thd.close();del thd
 #float('l')
 cmd = '; melcgen evtfile=%s deadfile=%s outfile=%s userdetid="0-7,11-17;18-25,29-35;36-43,47-53" starttime=%s stoptime=%s minPI=%s maxPI=%s binsize=1 deadcorr=yes'%(screenfile,deadfile,lcfile,startm,stoptm,minpi,maxpi)
 cmd += ' ; ls -t %s_g0*.lc | head -1 >  %s'%(lcfile,lcnametxt)
 cmd += ' ; python mebkgmap_2012005_lc_err.py lc %s %s %s %s %s %s %s %s %s %s'%(screenfile,basefile['EHK'],newgtifile,deadfile,basefile['TH'],lcnametxt,minpi,maxpi,bkgfile,newbdfile)
+print(cmd)
 os.system(cmdinit + cmd)
+
+burst_ra = 263.353
+burst_dec = -33.389
+speccmd = '; mespecgen evtfile=%s deadfile=%s outfile=%s userdetid="0-7,11-17;18-25,29-35;36-43,47-53" starttime=%s stoptime=%s minPI=%s maxPI=%s'%(screenfile,deadfile,specfile,startm,stoptm,minpi,maxpi)
+speccmd += ' ; ls -t %s_g0*.pha | head -1 >  %s'%(specfile,specnametxt)
+speccmd += ' ; python mebkgmap_2012005_lc_err.py spec %s %s %s %s %s %s %s %s %s %s'%(screenfile,basefile['EHK'],newgtifile,deadfile,basefile['TH'],specnametxt,minpi,maxpi,specbkgfile,newbdfile)
+speccmd += ' ; merspgen phafile=%s_g0_0-17.pha outfile=%s attfile=%s ra=%s dec=%s'%(specfile,rspfile,crtattfile,burst_ra,burst_dec)
+print(speccmd)
+os.system(cmdinit + speccmd)
 
 sfile=pf.open("%s"%newbdfile)
 bdnum=sfile[1].data.field(0)
@@ -119,7 +143,7 @@ r1=480./(480-bdbox1)
 r2=480./(480-bdbox2)
 rall=[r0,r1,r2]
 print np.array(range(256)+range(352,576))[~np.in1d(range(256)+range(352,576),bdnum)],np.array(range(256)+range(352,576))[~np.in1d(range(256)+range(352,576),bdnum)].shape
-r0,r1,r2=1,1,1
+###r0,r1,r2=1,1,1####don't know why use 1,1,1
 
 hd1=pf.open('%s_g0_0-17.lc'%lcfile)
 hd2=pf.open('%s_box0.lc'%bkgfile)
