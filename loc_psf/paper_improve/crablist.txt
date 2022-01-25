@@ -1,0 +1,386 @@
+P020204130001
+P020204130002
+P020204130003
+P020204130004
+P020204130101
+P020204130102
+P020204130103
+P020204130104
+P020204130201
+P020204130202
+P020204130203
+P020204130301
+P020204130302
+P020204130303
+P020204130401
+P020204130402
+P020204130403
+P020204130501
+P020204130502
+P020204130503
+P020204130601
+P020204130602
+P020204130603
+P020204130604
+P020204130701
+P020204130702
+P020204130703
+P020204130704
+P020204130801
+P020204130802
+P020204130803
+P020204130901
+P020204130902
+P020204130903
+P020204131001
+P020204131002
+P020204131003
+P020204131004
+P020204131101
+P020204131102
+P020204131103
+P020204131201
+P020204131202
+P020204131203
+P020204131204
+P020204131301
+P020204131302
+P020204131303
+P020204131304
+P020204131401
+P020204131402
+P020204131403
+P020204131404
+P020204131501
+P020204131502
+P020204131503
+P020204131504
+P020204131601
+P020204131602
+P020204131603
+P020204131604
+P020204131605
+P020204131701
+P020204131702
+P020204131703
+P020204131704
+P020204131801
+P020204131802
+P020204131803
+P020204131804
+P020204131901
+P020204131902
+P020204131903
+P020204131904
+P020204132001
+P020204132002
+P020204132003
+P020204132004
+P020204132101
+P020204132102
+P020204132103
+P020204132104
+P020204132201
+P020204132202
+P020204132203
+P020204132204
+P020204132301
+P020204132302
+P020204132303
+P020204132304
+P020204132401
+P020204132402
+P020204132403
+P020204132404
+P020204132501
+P020204132502
+P020204132503
+P020204132504
+P020101329601
+P020101329602
+P020101329603
+P020101329604
+P020101329701
+P020101329702
+P020101329703
+P020101329704
+P020101332001
+P020101332002
+P020101332003
+P020101332004
+P020101332101
+P020101332102
+P020101332103
+P020101332104
+P020101333301
+P020101333302
+P020101333303
+P020101333304
+P020101333401
+P020101333402
+P020101333403
+P020101333404
+P020101335201
+P020101335202
+P020101335203
+P020101335204
+P020101335301
+P020101335302
+P020101335303
+P020101335304
+P020101336801
+P020101336802
+P020101336803
+P020101336804
+P020101336901
+P020101336902
+P020101336903
+P020101336904
+P020101337401
+P020101337402
+P020101337403
+P020101337404
+P020101337501
+P020101337502
+P020101337503
+P020101337504
+P020101337801
+P020101337802
+P020101337803
+P020101337804
+P020101338501
+P020101338502
+P020101338503
+P020101338504
+P020101339101
+P020101339102
+P020101339103
+P020101339104
+P020101339201
+P020101339202
+P020101339203
+P020101339204
+P020101339501
+P020101339502
+P020101339503
+P020101339504
+P020101340301
+P020101340302
+P020101340303
+P020101340304
+P020101340401
+P020101340402
+P020101340403
+P020101340404
+P020101342301
+P020101342302
+P020101342303
+P020101342304
+P020101344301
+P020101344302
+P020101344303
+P020101344304
+P020101346201
+P020101346202
+P020101346203
+P020101346204
+P020101347901
+P020101347902
+P020101347903
+P020101347904
+P020101348301
+P020101348302
+P020101348303
+P020101348304
+P020101348401
+P020101348402
+P020101348403
+P020101348404
+P020101350201
+P020101350202
+P020101350203
+P020101350204
+P020101350301
+P020101350302
+P020101350303
+P020101350304
+
+lc file no exist: P020204130001 False False False False
+lc file no exist: P020204130002 False False False False
+lc file no exist: P020204130003 False False False False
+lc file no exist: P020204130004 False False False False
+lc file no exist: P020204130101 False False False False
+lc file no exist: P020204130102 False False False False
+lc file no exist: P020204130103 False False False False
+lc file no exist: P020204130104 False False False False
+lc file no exist: P020204130201 False False False False
+lc file no exist: P020204130202 False False False False
+lc file no exist: P020204130203 False False False False
+lc file no exist: P020204130301 False False False False
+lc file no exist: P020204130302 False False False False
+lc file no exist: P020204130303 False False False False
+lc file no exist: P020204130401 False False False False
+lc file no exist: P020204130402 False False False False
+lc file no exist: P020204130403 False False False False
+lc file no exist: P020204130501 False False False False
+lc file no exist: P020204130502 False False False False
+lc file no exist: P020204130503 False False False False
+lc file no exist: P020204130601 False False False False
+lc file no exist: P020204130602 False False False False
+lc file no exist: P020204130603 False False False False
+lc file no exist: P020204130604 False False False False
+lc file no exist: P020204130701 False False False False
+lc file no exist: P020204130702 False False False False
+lc file no exist: P020204130703 False False False False
+lc file no exist: P020204130704 False False False False
+lc file no exist: P020204130801 False False False False
+lc file no exist: P020204130802 False False False False
+lc file no exist: P020204130803 False False False False
+lc file no exist: P020204130901 False False False False
+lc file no exist: P020204130902 False False False False
+lc file no exist: P020204130903 False False False False
+lc file no exist: P020204131001 False False False False
+lc file no exist: P020204131002 False False False False
+lc file no exist: P020204131003 False False False False
+lc file no exist: P020204131004 False False False False
+lc file no exist: P020204131101 False False False False
+lc file no exist: P020204131102 False False False False
+lc file no exist: P020204131103 False False False False
+lc file no exist: P020204131201 False False False False
+lc file no exist: P020204131202 False False False False
+lc file no exist: P020204131203 False False False False
+lc file no exist: P020204131204 False False False False
+lc file no exist: P020204131301 False False False False
+lc file no exist: P020204131302 False False False False
+lc file no exist: P020204131303 False False False False
+lc file no exist: P020204131304 False False False False
+lc file no exist: P020204131401 False False False False
+lc file no exist: P020204131402 False False False False
+lc file no exist: P020204131403 False False False False
+lc file no exist: P020204131404 False False False False
+lc file no exist: P020204131501 False False False False
+lc file no exist: P020204131502 False False False False
+lc file no exist: P020204131503 False False False False
+lc file no exist: P020204131504 False False False False
+lc file no exist: P020204131601 False False False False
+lc file no exist: P020204131602 False False False False
+lc file no exist: P020204131603 False False False False
+lc file no exist: P020204131604 False False False False
+lc file no exist: P020204131605 False False False False
+lc file no exist: P020204131701 False False False False
+lc file no exist: P020204131702 False False False False
+lc file no exist: P020204131703 False False False False
+lc file no exist: P020204131704 False False False False
+lc file no exist: P020204131801 False False False False
+lc file no exist: P020204131802 False False False False
+lc file no exist: P020204131803 False False False False
+lc file no exist: P020204131804 False False False False
+lc file no exist: P020204131901 False False False False
+lc file no exist: P020204131902 False False False False
+lc file no exist: P020204131903 False False False False
+lc file no exist: P020204131904 False False False False
+lc file no exist: P020204132001 False False False False
+lc file no exist: P020204132002 False False False False
+lc file no exist: P020204132003 False False False False
+lc file no exist: P020204132004 False False False False
+lc file no exist: P020204132101 False False False False
+lc file no exist: P020204132102 False False False False
+lc file no exist: P020204132103 False False False False
+lc file no exist: P020204132104 False False False False
+lc file no exist: P020204132201 False False False False
+lc file no exist: P020204132202 False False False False
+lc file no exist: P020204132203 False False False False
+lc file no exist: P020204132204 False False False False
+lc file no exist: P020204132301 False False False False
+lc file no exist: P020204132302 False False False False
+lc file no exist: P020204132303 False False False False
+lc file no exist: P020204132304 False False False False
+lc file no exist: P020204132401 False False False False
+lc file no exist: P020204132402 False False False False
+lc file no exist: P020204132403 False False False False
+lc file no exist: P020204132404 False False False False
+lc file no exist: P020204132501 False False False False
+lc file no exist: P020204132502 False False False False
+lc file no exist: P020204132503 False False False False
+lc file no exist: P020204132504 False False False False
+lc file no exist: P020101329602 False False False False
+lc file no exist: P020101329603 False False False False
+lc file no exist: P020101329604 False False False False
+lc file no exist: P020101329702 False False False False
+lc file no exist: P020101329703 False False False False
+lc file no exist: P020101329704 False False False False
+lc file no exist: P020101332002 False False False False
+lc file no exist: P020101332003 False False False False
+lc file no exist: P020101332004 False False False False
+lc file no exist: P020101332102 False False False False
+lc file no exist: P020101332103 False False False False
+lc file no exist: P020101332104 False False False False
+lc file no exist: P020101333302 False False False False
+lc file no exist: P020101333303 False False False False
+lc file no exist: P020101333304 False False False False
+lc file no exist: P020101333402 False False False False
+lc file no exist: P020101333403 False False False False
+lc file no exist: P020101333404 False False False False
+lc file no exist: P020101335202 False False False False
+lc file no exist: P020101335203 False False False False
+lc file no exist: P020101335204 False False False False
+lc file no exist: P020101335302 False False False False
+lc file no exist: P020101335303 False False False False
+lc file no exist: P020101335304 False False False False
+lc file no exist: P020101336802 False False False False
+lc file no exist: P020101336803 False False False False
+lc file no exist: P020101336804 False False False False
+lc file no exist: P020101336902 False False False False
+lc file no exist: P020101336903 False False False False
+lc file no exist: P020101336904 False False False False
+lc file no exist: P020101337402 False False False False
+lc file no exist: P020101337403 False False False False
+lc file no exist: P020101337404 False False False False
+lc file no exist: P020101337502 False False False False
+lc file no exist: P020101337503 False False False False
+lc file no exist: P020101337504 False False False False
+lc file no exist: P020101337802 False False False False
+lc file no exist: P020101337803 False False False False
+lc file no exist: P020101337804 False False False False
+lc file no exist: P020101338502 False False False False
+lc file no exist: P020101338503 False False False False
+lc file no exist: P020101338504 False False False False
+lc file no exist: P020101339102 False False False False
+lc file no exist: P020101339103 False False False False
+lc file no exist: P020101339104 False False False False
+lc file no exist: P020101339202 False False False False
+lc file no exist: P020101339203 False False False False
+lc file no exist: P020101339204 False False False False
+lc file no exist: P020101339502 False False False False
+lc file no exist: P020101339503 False False False False
+lc file no exist: P020101339504 False False False False
+lc file no exist: P020101340302 False False False False
+lc file no exist: P020101340303 False False False False
+lc file no exist: P020101340304 False False False False
+lc file no exist: P020101340402 False False False False
+lc file no exist: P020101340403 False False False False
+lc file no exist: P020101340404 False False False False
+lc file no exist: P020101342302 False False False False
+lc file no exist: P020101342303 False False False False
+lc file no exist: P020101342304 False False False False
+lc file no exist: P020101344302 False False False False
+lc file no exist: P020101344303 False False False False
+lc file no exist: P020101344304 False False False False
+lc file no exist: P020101346202 False False False False
+lc file no exist: P020101346203 False False False False
+lc file no exist: P020101346204 False False False False
+lc file no exist: P020101347902 False False False False
+lc file no exist: P020101347903 False False False False
+lc file no exist: P020101347904 False False False False
+lc file no exist: P020101348302 False False False False
+lc file no exist: P020101348303 False False False False
+lc file no exist: P020101348304 False False False False
+lc file no exist: P020101348402 False False False False
+lc file no exist: P020101348403 False False False False
+lc file no exist: P020101348404 False False False False
+lc file no exist: P020101350202 False False False False
+lc file no exist: P020101350203 False False False False
+lc file no exist: P020101350204 False False False False
+lc file no exist: P020101350302 False False False False
+lc file no exist: P020101350303 False False False False
+lc file no exist: P020101350304 False False False False

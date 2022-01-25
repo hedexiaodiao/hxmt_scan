@@ -8,9 +8,9 @@ from Fitstogether2 import fitstogetherMulti
 listall = []
 with open('crablist.txt','r')as f:
     for i in f:
-        listall.append('P0'+i[:9]+'01')
+        listall.append(i[:13])
 
-outpath= '/sharefs/hbkg/user/luoqi/psfl/ME'
+outpath= '/sharefs/hbkg/user/luoqi/psfl/calib/7_40'
 
 print(listall)
 
@@ -18,6 +18,7 @@ attall = []
 lc0all = []
 lc1all = []
 lc2all = []
+
 for i in range(len(listall)):
     ObsID = listall[i]
     stObsID = ObsID[0:8]
@@ -25,16 +26,19 @@ for i in range(len(listall)):
     lc0file = '/sharefs/hbkg/user/saina/data294/%s/%s/ME/me_lc_box0_small_cut.fits'%(stObsID,ObsID)
     lc1file = '/sharefs/hbkg/user/saina/data294/%s/%s/ME/me_lc_box1_small_cut.fits'%(stObsID,ObsID)
     lc2file = '/sharefs/hbkg/user/saina/data294/%s/%s/ME/me_lc_box2_small_cut.fits'%(stObsID,ObsID)
-    if os.path.exists(attfile):
+    attflag = os.path.exists(attfile)
+    lc0flag = os.path.exists(lc0file)
+    lc1flag = os.path.exists(lc1file)
+    lc2flag = os.path.exists(lc2file)
+    if attflag and lc0flag and lc1flag and lc2flag:
         attall.append(attfile)
-    if os.path.exists(lc0file):
         lc0all.append(lc0file)
-    if os.path.exists(lc1file):
         lc1all.append(lc1file)
-    if os.path.exists(lc2file):
         lc2all.append(lc2file)
+    else:
+        print("lc file no exist:",ObsID,attflag,lc0flag,lc1flag,lc2flag)
 
-print(attall)
+###print(attall)
 fitstogetherMulti(lc0all,outpath+'/me_b0.fits')
 fitstogetherMulti(lc1all,outpath+'/me_b1.fits')
 fitstogetherMulti(lc2all,outpath+'/me_b2.fits')
