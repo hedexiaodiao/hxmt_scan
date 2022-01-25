@@ -1,0 +1,2 @@
+/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN
+/sharefs/hbkg/data/SCAN/ME
