@@ -81,8 +81,10 @@ def merun_v2(path, Wpath, ObsID):
 	metempfile_list = glob.glob(r'%s/%s/%s*/*/*ME-TH*' % (path, stObsID, ObsID))
 	orbitfile_list = glob.glob(r'%s/%s/*/*_Orbit_*'%(path,stObsID))
 	ehk1N_path = "/sharefs/hbkg/user/cwang/ehk"
-	ehkfile_list = glob.iglob(r'%s/ehk%s*'%(ehk1N_path,stObsID[2:]))##/sharefs/hbkg/user/cwang/ehk stObsID[2:]#glob.iglob(r'%s/%s/*/*EHK*'%(path,stObsID))
-	print(ehkfile_list)
+	ehkfile_list1 = glob.iglob(r'%s/ehk%s*'%(ehk1N_path,stObsID[2:]))##/sharefs/hbkg/user/cwang/ehk stObsID[2:]#glob.iglob(r'%s/%s/*/*EHK*'%(path,stObsID))
+	ehkfile_list2 = glob.iglob(r'%s/%s/*/*EHK*'%(path,stObsID))
+	print(ehkfile_list1)
+	print(ehkfile_list2)
 	nattfile_list = glob.iglob(r'%s/%s/*/*_Att_*'%(Npath,stObsID))
 	norbitfile_list = glob.glob(r'%s/%s/*/*_Orbit_*'%(Npath,stObsID))
 	print "%s: files loaded"%stObsID
@@ -107,9 +109,13 @@ def merun_v2(path, Wpath, ObsID):
 		if re.findall(r"VU",i)==[]:
 			orbitfile = i
 			flag4=1
-	for i in ehkfile_list:
+	for i in ehkfile_list1:
 		if re.findall(r"VU",i)==[]:
-			ehkfile = i
+			ehkfile1 = i
+			flag5=1
+	for i in ehkfile_list2:
+		if re.findall(r"VU",i)==[]:
+			ehkfile2 = i
 			flag5=1
 	for i in nattfile_list:
 		if re.findall(r"VU",i)==[]:
@@ -151,10 +157,16 @@ def merun_v2(path, Wpath, ObsID):
 		print "%s can not be calculated: th" % ObsID
 		return 0
 	try:
-		print ehkfile
+		print ehkfile1
+		ehkfile = ehkfile1
 	except NameError:
-		print "No ehk file, need calculate by soft"
-		flag5=0
+		try:
+			print ehkfile2
+			ehkfile = ehkfile2
+		except NameError:
+			print
+			"No ehk file, need calculate by soft"
+			flag5=0
 	print "---------------------------------------------------------------------------------------"
 	###################copy files to the floders##############################################################
 	os.system("cp %s %s"%(attfile,Wattfile))

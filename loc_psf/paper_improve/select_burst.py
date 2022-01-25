@@ -112,8 +112,11 @@ for i in range(len(Erange_list)):
         sys.exit(0)
     else:
         hdul = pf.open(fitsname)
-        x_data = hdul[1].data['TIME']
+        time_start = hdul[1].data['TIME'][0]
+        x_data = hdul[1].data['TIME'] - time_start
         hdul.close()
+        with open('./time_start.txt', 'a+') as f:
+            print(time_start, file=f)
         del hdul
     ndata = np.zeros((4,x_data.shape[0]))
     ndata[0,:] = x_data

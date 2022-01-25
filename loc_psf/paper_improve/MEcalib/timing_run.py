@@ -27,8 +27,22 @@ def mkdir_try(dirname):
 		except OSError:
 			print('Wrong with make dir:\n'+dirname)
 
-def merun_v2(path, Wpath, ObsID):
-	program_tree = '/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN'
+def merun_v2(path, Wpath, ObsID,Erange):
+	if Erange=='7_12':
+		program_tree = '/sharefs/hbkg/user/luoqi/psfl/calib/7_12/genlc'
+		minpi = 68  ###energy =7 keV
+		maxpi = 154  ###energy = 12 keV
+	elif Erange=='7_20':
+		program_tree = '/sharefs/hbkg/user/luoqi/psfl/calib/7_20/genlc'
+		minpi = 68  ###energy =7 keV
+		maxpi = 290  ###energy = 20 keV
+	elif Erange=='7_40':
+		program_tree = '/sharefs/hbkg/user/luoqi/psfl/calib/7_20/genlc'
+		minpi = 68
+		maxpi = 631
+	else:
+		print("no exist input Erange, please change code yourself")
+		sys.exit(0)
 	###--------------------mkdirs---------------------
 	OrgWpath = Wpath + '/Org'  ###
 	NetWpath = Wpath + '/Net'  ###
@@ -81,8 +95,10 @@ def merun_v2(path, Wpath, ObsID):
 	metempfile_list = glob.glob(r'%s/%s/%s*/*/*ME-TH*' % (path, stObsID, ObsID))
 	orbitfile_list = glob.glob(r'%s/%s/*/*_Orbit_*'%(path,stObsID))
 	ehk1N_path = "/sharefs/hbkg/user/cwang/ehk"
-	ehkfile_list = glob.iglob(r'%s/ehk%s*'%(ehk1N_path,stObsID[2:]))##/sharefs/hbkg/user/cwang/ehk stObsID[2:]#glob.iglob(r'%s/%s/*/*EHK*'%(path,stObsID))
-	print(ehkfile_list)
+	ehkfile_list1 = glob.iglob(r'%s/ehk%s*'%(ehk1N_path,stObsID[2:]))##/sharefs/hbkg/user/cwang/ehk stObsID[2:]#glob.iglob(r'%s/%s/*/*EHK*'%(path,stObsID))
+	ehkfile_list2 = glob.iglob(r'%s/%s/*/*EHK*'%(path,stObsID))
+	print(ehkfile_list1)
+	print(ehkfile_list2)
 	nattfile_list = glob.iglob(r'%s/%s/*/*_Att_*'%(Npath,stObsID))
 	norbitfile_list = glob.glob(r'%s/%s/*/*_Orbit_*'%(Npath,stObsID))
 	print "%s: files loaded"%stObsID
@@ -107,9 +123,13 @@ def merun_v2(path, Wpath, ObsID):
 		if re.findall(r"VU",i)==[]:
 			orbitfile = i
 			flag4=1
-	for i in ehkfile_list:
+	for i in ehkfile_list1:
 		if re.findall(r"VU",i)==[]:
-			ehkfile = i
+			ehkfile1 = i
+			flag5=1
+	for i in ehkfile_list2:
+		if re.findall(r"VU",i)==[]:
+			ehkfile2 = i
 			flag5=1
 	for i in nattfile_list:
 		if re.findall(r"VU",i)==[]:
@@ -151,10 +171,15 @@ def merun_v2(path, Wpath, ObsID):
 		print "%s can not be calculated: th" % ObsID
 		return 0
 	try:
-		print ehkfile
+		print ehkfile1
+		ehkfile = ehkfile1
 	except NameError:
-		print "No ehk file, need calculate by soft"
-		flag5=0
+		try:
+			print ehkfile2
+			ehkfile = ehkfile2
+		except NameError:
+			print "No ehk file, need calculate by soft"
+			flag5=0
 	print "---------------------------------------------------------------------------------------"
 	###################copy files to the floders##############################################################
 	os.system("cp %s %s"%(attfile,Wattfile))
@@ -186,8 +211,10 @@ def merun_v2(path, Wpath, ObsID):
 	if 1:###not os.path.exists(Wgtifile):###----maybe need flag5, hxmtehkgen
 		#if flag5!=1:
 			#os.system("cp %s %s/%s/ehk.fits"%(ehkfile,Wpath,ObsID))#######after SAA_FLAG###SUN_ANG>=10&&MOON_ANG>=5&&
-		cmd = 'megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=NONE expr="ELV>5&&COR>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"' % (
-		metempfile, Wehkfile, Wgtifile)
+		###cmd = 'megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=NONE expr="ELV>5&&COR>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"' % (
+		###metempfile, Wehkfile, Wgtifile)
+		cmd = 'megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=YES'%(
+			metempfile, Wehkfile, Wgtifile)
 		print(cmd)
 		os.system(cmd)
 			#os.system('hxmtehkgen orbfile=%s attfile=%s outfile=%s/%s/ehk.fits step_sec=0.25 leapfile=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/refdata/leapsec.fits rigidity=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/refdata/rigidity_20060421.fits saafile=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/SAA/SAA.fits'%(orbitfile,attfile,Wpath,ObsID))
@@ -227,9 +254,9 @@ def merun_v2(path, Wpath, ObsID):
 			blind="46"
 			;;
 			esac
-	melcgen evtfile=%s deadfile=%s outfile=%s/%s/me_${box}_small userdetid="${small}" starttime=0 stoptime=0 minPI=68 maxPI=631 binsize=1 deadcorr=yes
-	melcgen evtfile=%s deadfile=%s outfile=%s/%s/me_${box}_blind userdetid="${blind}" starttime=0 stoptime=0 minPI=68 maxPI=631 binsize=1 deadcorr=yes
-	done'''%(Wscreenfile, Wdeadfile, NetWpath, ObsID, Wscreenfile, Wdeadfile, NetWpath, ObsID)###change outfile name----
+	melcgen evtfile=%s deadfile=%s outfile=%s/%s/me_${box}_small userdetid="${small}" starttime=0 stoptime=0 minPI=%s maxPI=%s binsize=1 deadcorr=yes
+	melcgen evtfile=%s deadfile=%s outfile=%s/%s/me_${box}_blind userdetid="${blind}" starttime=0 stoptime=0 minPI=%s maxPI=%s binsize=1 deadcorr=yes
+	done'''%(Wscreenfile, Wdeadfile, NetWpath, ObsID, minpi, maxpi, Wscreenfile, Wdeadfile, NetWpath, ObsID, minpi, maxpi)###change outfile name----
 	#melcgen evtfile=%s/%s/ME/me_screen.fits deadfile=%s/%s/ME/me_dt.fits outfile=%s/%s/ME/me_${box}_big userdetid="${big}" starttime=0 stoptime=0 minPI=68 maxPI=631 binsize=1 deadcorr=yes
 	if 1:###not os.path.exists("%s/%s/me_2_blind_g0_46.lc"%(NetWpath, ObsID)):
 		print me_lc_cmd
@@ -256,9 +283,9 @@ def merun_v2(path, Wpath, ObsID):
 	lcfit_command = 'source /sharefs/hbkg/user/luoqi/home/scan_MEfit_env.sh;sh %s/lcfit/sub_gps_lcfit.sh %s' % (program_tree,
 		xml_file)
 	###lcfit_command = 'source /sharefs/hbkg/user/luoqi/home/scan_MEfit_env.sh;python /sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/lcfit/test_all_typeSub.py %s'%(xml_file)
-	with open(program_tree + '/gps_mission/genlc_success.txt', 'a+') as f:
+	with open(program_tree + '/genlc%s_success.txt'%Erange, 'a+') as f:
 		print>>f,ObsID
-	with open(program_tree + '/gps_mission/lcfit_misson.sh', 'a+') as f:
+	with open(program_tree + '/lcfit%s_misson.sh'%Erange, 'a+') as f:
 		print>>f,lcfit_command
 	###os.system(lcfit_command)
 
@@ -277,11 +304,10 @@ if __name__ == "__main__":
 
 	if len(sys.argv) < 2:
 		ObsID = input("input keywords like P010129400101 :")
-	elif len(sys.argv) == 2:
+	elif len(sys.argv) >= 2:
 		ObsID = sys.argv[1]
-	else:
-		print('Wrong number of parameters!')
-		os.exit(0)
+
+	Erange = sys.argv[2]
 	path = '/hxmt/work/HXMT-DATA/1L/A%s/%s/' % (ObsID[1:3], ObsID[:-5])
 
 
@@ -294,5 +320,5 @@ if __name__ == "__main__":
 	#lclist.sort()
 
 	###lclist='P021100715501'
-	merun_v2(path,Wpath,ObsID)
+	merun_v2(path,Wpath,ObsID,Erange)
 
