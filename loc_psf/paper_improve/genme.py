@@ -15,22 +15,39 @@ def mkdir_try(dirname):
         except OSError:
             print('Wrong with make dir:\n'+dirname)
 
-###发现bug：mescreen出问题的话，手动运行一遍逐个输入文件可能就好了，猜测可能与总命令的字符串长度有关系
+if len(sys.argv)==3:
+    energy_str = sys.argv[2]
+    if energy_str=='0':
+        print('use energy 7-12 keV')
+        minpi = 68  ###energy =7 keV
+        maxpi = 154 ###energy = 12 keV
+        outpath = '/sharefs/hbkg/user/luoqi/psfl/genlc/7_12/'
+    elif energy_str=='1':
+        print('use energy 7-20 keV')
+        minpi = 68  ###energy =7 keV
+        maxpi = 290  ###energy = 20 keV
+        outpath = '/sharefs/hbkg/user/luoqi/psfl/genlc/7_20/'
+    else:
+        print('wrong input!')
+else:
+    print('use energy 7-12 keV')
+    minpi = 68  ###energy =7 keV
+    maxpi = 154  ###energy = 12 keV
+    outpath = '/sharefs/hbkg/user/luoqi/psfl/genlc/7_12/'
 
 obsid = sys.argv[1]
 pfile = "/sharefs/hbkg/user/luoqi/HXMT_SCAN/loc_psf/pfiles/me%s"%str(obsid)
 os.system('mkdir %s'%pfile);os.system("rm %s/*"%pfile);
 pfilepath = "%s;/home/hxmt/hxmtsoft2/hxmtsoftv2.02/install/x86_64-pc-linux-gnu-libc2.12/syspfiles"%pfile
-cmdinit = 'sleep 1;source /sharefs/hbkg/user/nangyi/hxmtsoft_v2.02.sh ;export PFILES="%s" '%(pfilepath)
-minpi = 68
-#maxpi = 166
-#inpi = 166
-maxpi = 631
+###cmdinit = 'sleep 1;source /sharefs/hbkg/user/nangyi/hxmtsoft_v2.02.sh ;export PFILES="%s" '%(pfilepath)
+cmdinit = 'sleep 1;source /sharefs/hbkg/user/luoqi/home/hxmtsoft_v2.02.sh ;export PFILES="%s"'%(pfilepath)
+
 basedatapath = '/hxmt/work/HXMT-DATA/1L/'+"A%s/%s/%s/"%(obsid[1:3],obsid[:8],obsid[:11])
 datapath = glob.glob(basedatapath+obsid+'-*')[0]
 basefile = get_rawdata(datapath, instrument="ME")
 
-outpath = '/sharefs/hbkg/user/luoqi/psfl/genlc/7_40/'#'/sharefs/hbkg/data/SCAN/luoqi/ME_data/7_40/'
+###outpath = '/sharefs/hbkg/user/luoqi/psfl/genlc/7_12/'#'/sharefs/hbkg/data/SCAN/luoqi/ME_data/7_40/'
+###outpath = '/sharefs/hbkg/user/luoqi/psfl/genlc/7_20/'
 pipath = outpath + 'pi'
 grdpath = outpath + 'grd'
 gtipath = outpath + 'gti'
@@ -71,18 +88,31 @@ if not os.path.exists(pifile):
 
 if not os.path.exists(grdfile):
     cmd +=' ;megrade evtfile=%s outfile=%s deadfile=%s binsize=1'%(pifile,grdfile,deadfile)
+os.system(cmdinit + cmd)
 
-if not os.path.exists(gtifile):
+start_time = 100000000
+stop_time  = 400000000
+gticmd=''
+if 1:#not os.path.exists(gtifile):
     #cmd +=' ;megtigen tempfile="%s" ehkfile="%s" outfile="%s" defaultexpr=NONE expr="ELV>8&&COR>8&&SAA_FLAG==0&&T_SAA>300&&TN_SAA>300&&ANG_DIST<=0.02" clobber=yes history=yes'%(basefile['TH'], basefile['EHK'], gtifile)
-    cmd +=' ;megtigen tempfile="%s" ehkfile="%s" outfile="%s" defaultexpr=NONE expr="ELV>8" clobber=yes history=yes'%(basefile['TH'], basefile['EHK'], gtifile)
-    cmd +=' ;megti %s %s %s $HEADAS/refdata/medetectorstatus.fits %s'%(grdfile, gtifile, newgtifile, newbdfile)
+    gticmd +=' ;megtigen tempfile="%s" ehkfile="%s" outfile="%s" defaultexpr=NONE expr="ELV>8" clobber=yes history=yes'%(basefile['TH'], basefile['EHK'], gtifile)
+    os.system(cmdinit + gticmd)
+    hdul = pf.open(gtifile)
+    data = hdul[1].data
+    data['START'] = start_time
+    data['STOP'] = stop_time
+    hdul.writeto(gtifile, clobber=True)
+    hdul.close()
+    newgticmd =' ;megti %s %s %s $HEADAS/refdata/medetectorstatus.fits %s'%(grdfile, gtifile, newgtifile, newbdfile)
+    os.system(cmdinit + newgticmd)
 
 newbdfile = outpath + 'gti/mebadall.fits'
 
+screencmd=''
 if not os.path.exists(screenfile):
-    cmd +=' ;mescreen evtfile=%s gtifile=%s outfile=%s baddetfile=%s userdetid="0-53"'%(grdfile,gtifile,screenfile,newbdfile)
-print(cmd)
-os.system(cmdinit + cmd)
+    screencmd +=' ;mescreen evtfile=%s gtifile=%s outfile=%s baddetfile=%s userdetid="0-53"'%(grdfile,gtifile,screenfile,newbdfile)
+print(screencmd)
+os.system(cmdinit + screencmd)
 #plt.switch_backend('tkagg')
 '''
 #newbdfile = outpath + "gti/mebadall.fits"
@@ -106,6 +136,7 @@ try:
 except:
     pass
 
+'''
 start_list = [259271900,259271965,259271865,259271995]
 stop_list = [259271940,259271995,259271900,259272020]
 startm = start_list[3]
@@ -113,7 +144,7 @@ stoptm = stop_list[3]
 '''
 startm = int(thd[2].data.field(0)[0])+1
 stoptm = int(thd[2].data.field(1)[-1])-1
-'''
+#'''
 
 thd.close();del thd
 #float('l')
