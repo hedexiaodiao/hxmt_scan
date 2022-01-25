@@ -19,6 +19,20 @@ import check_reatt_auto
 sys.path.append("/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/lcfit")
 from write_007xml_index import *
 
+import subprocess###
+def exec_cmd(cmd,my_env):
+    """Run shell command"""
+    p = subprocess.Popen(cmd, stdin=subprocess.PIPE,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT,
+                         env=my_env,
+                         shell=True)
+
+    log_content = p.communicate()[0]
+    #print(log_content.decode('utf-8'))
+
+    return p.returncode, log_content
+
 ###os.system("source /hxmt/home/hxmtsoft2/hxmtsoft_v2.sh")
 def mkdir_try(dirname):
 	if os.path.exists(dirname) == 0:
@@ -83,11 +97,12 @@ def merun_v2(path, Wpath, ObsID,Erange):
 	print path,Wpath
 	###Change Ppath by LQ
 	###Ppath='/sharefs/hbkg/user/saina/pfiles_small/'
-	Ppath = '/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/pfiles_small'
+	Ppath = '/sharefs/hbkg/user/luoqi/psfl/calib/pfiles_small'
 	if os.path.exists(Ppath +"/pfiles_" + ObsID):
 		os.system("rm -r %s/pfiles_%s" % (Ppath, ObsID))
+	my_env = os.environ
 	os.system("mkdir %s/pfiles_%s" % (Ppath, ObsID))
-	os.environ["PFILES"]="%s/pfiles_%s;/home/hxmt/hxmtsoft2/soft/install/x86_64-unknown-linux-gnu-libc2.12/syspfiles"%(Ppath, ObsID)
+	my_env['PFILES']="%s/pfiles_%s;/home/hxmt/hxmtsoft2/soft/install/x86_64-unknown-linux-gnu-libc2.12/syspfiles"%(Ppath, ObsID)
 	os.system("echo $PFILES")
 	######################get all the files and folders##########################################################
 	attfile_list = glob.iglob(r'%s/%s/*/*_Att_*'%(path,stObsID))
@@ -207,16 +222,20 @@ def merun_v2(path, Wpath, ObsID,Erange):
 
 	os.system("cp %s %s" % (ehkfile, Wehkfile))
 
-	os.system('rm %s' % (Wme_gtifile))
+	###os.system('rm %s' % (Wme_gtifile))
 	if 1:###not os.path.exists(Wgtifile):###----maybe need flag5, hxmtehkgen
 		#if flag5!=1:
 			#os.system("cp %s %s/%s/ehk.fits"%(ehkfile,Wpath,ObsID))#######after SAA_FLAG###SUN_ANG>=10&&MOON_ANG>=5&&
-		###cmd = 'megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=NONE expr="ELV>5&&COR>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"' % (
-		###metempfile, Wehkfile, Wgtifile)
-		cmd = 'megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=YES'%(
+		cmd = 'megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=NONE expr="ELV>5&&COR>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"' % (
 			metempfile, Wehkfile, Wgtifile)
+		###cmd = 'megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=YES'%(
+		###	metempfile, Wehkfile, Wgtifile)
 		print(cmd)
-		os.system(cmd)
+		with open(program_tree + '/gti_manual.txt', 'a+') as f:
+			print>>f,cmd
+		cmd_tem = ';export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;' + cmd
+		exec_code, exec_log = exec_cmd(cmd_tem, my_env)
+		###os.system(cmd)
 			#os.system('hxmtehkgen orbfile=%s attfile=%s outfile=%s/%s/ehk.fits step_sec=0.25 leapfile=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/refdata/leapsec.fits rigidity=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/refdata/rigidity_20060421.fits saafile=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/SAA/SAA.fits'%(orbitfile,attfile,Wpath,ObsID))
 			#os.system('megtigen tempfile=%s ehkfile=%s/%s/ehk.fits outfile=%s/%s/ME/gtiv2.fits defaultexpr=NONE expr="ELV>5&&COR3>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"'%(metempfile,Wpath,ObsID,Wpath,ObsID))
 		#else:
@@ -292,15 +311,6 @@ def merun_v2(path, Wpath, ObsID,Erange):
 
 
 if __name__ == "__main__":
-	dir_strlist = []
-	with open('dir_config.txt', 'r') as f:
-		for line in f.readlines():
-			line = line.strip()
-			dir_strlist.append(line)
-	print(dir_strlist)
-	program_tree = dir_strlist[0]
-	scan_tree = dir_strlist[1]
-	Wpath = scan_tree  ###'/sharefs/hbkg/data/SCAN/ME'
 
 	if len(sys.argv) < 2:
 		ObsID = input("input keywords like P010129400101 :")
@@ -308,6 +318,8 @@ if __name__ == "__main__":
 		ObsID = sys.argv[1]
 
 	Erange = sys.argv[2]
+	scan_tree = '/sharefs/hbkg/data/SCAN/luoqi/calib/%s' % Erange
+	Wpath = scan_tree  ###'/sharefs/hbkg/data/SCAN/ME'
 	path = '/hxmt/work/HXMT-DATA/1L/A%s/%s/' % (ObsID[1:3], ObsID[:-5])
 
 
