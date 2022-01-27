@@ -103,6 +103,7 @@ def merun_v2(path, Wpath, ObsID,Erange):
 	my_env = os.environ
 	os.system("mkdir %s/pfiles_%s" % (Ppath, ObsID))
 	my_env['PFILES']="%s/pfiles_%s;/home/hxmt/hxmtsoft2/soft/install/x86_64-unknown-linux-gnu-libc2.12/syspfiles"%(Ppath, ObsID)
+	os.environ["PFILES"]="%s/pfiles_%s;/home/hxmt/hxmtsoft2/soft/install/x86_64-unknown-linux-gnu-libc2.12/syspfiles"%(Ppath, ObsID)
 	os.system("echo $PFILES")
 	######################get all the files and folders##########################################################
 	attfile_list = glob.iglob(r'%s/%s/*/*_Att_*'%(path,stObsID))
@@ -198,7 +199,7 @@ def merun_v2(path, Wpath, ObsID,Erange):
 	print "---------------------------------------------------------------------------------------"
 	###################copy files to the floders##############################################################
 	os.system("cp %s %s"%(attfile,Wattfile))
-	os.system("rm %s"%(Wgtifile))
+	###os.system("rm %s"%(Wgtifile))
 	evt_im = pf.open("%s"%(meevtfile))
 	ename = evt_im
 	ra_centre = ename[1].header['RA_PNT']
@@ -210,12 +211,12 @@ def merun_v2(path, Wpath, ObsID,Erange):
 	np.savetxt(centre_txtfile, src_centre.T, fmt="%s")
 	#####################run the script of hxmtsoft###################################################################
 	print ObsID
-	if 1:###not os.path.exists(Wpifile):
+	if not os.path.exists(Wpifile):
 		cmd = 'mepical evtfile=%s tempfile=%s outfile=%s' % (meevtfile, metempfile, Wpifile)
 		print(cmd)
 		os.system(cmd)
 		print ObsID, " : pi end"
-	if 1:###not os.path.exists(Wdeadfile):
+	if not os.path.exists(Wdeadfile):
 		cmd = 'megrade evtfile=%s outfile=%s deadfile=%s binsize=1' % (Wpifile, Wgradefile, Wdeadfile)
 		os.system(cmd)
 		print ObsID, " : grade end"
@@ -223,7 +224,7 @@ def merun_v2(path, Wpath, ObsID,Erange):
 	os.system("cp %s %s" % (ehkfile, Wehkfile))
 
 	###os.system('rm %s' % (Wme_gtifile))
-	if 1:###not os.path.exists(Wgtifile):###----maybe need flag5, hxmtehkgen
+	if not os.path.exists(Wgtifile):###----maybe need flag5, hxmtehkgen
 		#if flag5!=1:
 			#os.system("cp %s %s/%s/ehk.fits"%(ehkfile,Wpath,ObsID))#######after SAA_FLAG###SUN_ANG>=10&&MOON_ANG>=5&&
 		cmd = 'megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=NONE expr="ELV>5&&COR>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"' % (
@@ -231,7 +232,7 @@ def merun_v2(path, Wpath, ObsID,Erange):
 		###cmd = 'megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=YES'%(
 		###	metempfile, Wehkfile, Wgtifile)
 		print(cmd)
-		with open(program_tree + '/gti_manual.txt', 'a+') as f:
+		with open(program_tree + '/gti_manual.sh', 'a+') as f:
 			print>>f,cmd
 		cmd_tem = ';export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;' + cmd
 		exec_code, exec_log = exec_cmd(cmd_tem, my_env)
@@ -242,16 +243,18 @@ def merun_v2(path, Wpath, ObsID,Erange):
 			#os.system("cp %s %s/%s/ehk.fits"%(ehkfile,Wpath,ObsID))
 			#os.system('megtigen tempfile=%s ehkfile=%s/%s/ehk.fits outfile=%s/%s/ME/gtiv2.fits defaultexpr=NONE expr="ELV>5&&COR>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"'%(metempfile,Wpath,ObsID,Wpath,ObsID))
 		print ObsID, " : o-gti & ehk end"
-		regti_v2.regti(meevtfile, Wpath, ObsID)###calc total time
-		print ObsID, " : r-gti end"
+	regti_v2.regti(meevtfile, Wpath, ObsID)###calc total time
+	print ObsID, " : r-gti end"
 
 	if not os.path.exists(Wbaddetfile):
-		mescreen_newbd.mescreen_newbd('%s' % Wpath,'%s' % ObsID)###
+		mescreen_newbd.mescreen_newbd('%s' % Wpath,'%s' % ObsID, program_tree)###
 		print ObsID, " : bd end"
 
 	if 1:###not os.path.exists(Wscreenfile):
 		cmd = 'mescreen evtfile=%s gtifile=%s outfile=%s baddetfile=%s userdetid="0-53"' % (Wgradefile, Wme_gtifile, Wscreenfile, Wbaddetfile)
 		print(cmd)
+		with open(program_tree + '/screen_manual.sh', 'a+') as f:
+			print>>f,cmd
 		os.system(cmd)
 		print ObsID, " : screen end"
 	#os.system('mescreen evtfile=%s/%s/ME/me_grade.fits gtifile=%s/%s/ME/me_gti.fits outfile=%s/%s/ME/me_screen.fits baddetfile=${HEADAS}/refdata/medetectorstatus.fits userdetid="0-53"'%(Wpath,ObsID,Wpath,ObsID,Wpath,ObsID))
@@ -292,20 +295,20 @@ def merun_v2(path, Wpath, ObsID,Erange):
 		nbkghesmtpoly2.poly_bkg('%s' % NetWpath,'%s' % Wpath,'%s' % ObsID)
 		print ObsID, "2.BKG Cal: LC without BKG and BKG value."
 	if 1:###not os.path.exists("%s/%s/me_lc_box2_small.fits"%(NetWpath, ObsID)):
-		gen_lc_me.gen_lc_me(Wehkfile, Wme_gtifile, '%s' % (Wpath), "%s" % ObsID)
+		gen_lc_me.gen_lc_me(Wehkfile, Wme_gtifile, '%s' % (Wpath), "%s" % ObsID,program_tree)
 		print ObsID, "3.Auto LC Cut 1: Manual Preparation."
 	if 1:###not os.path.exists("%s/%s/me_lc_box2_small_cut.fits"%(NetWpath, ObsID)):
 		check_reatt_auto.reatt(Wattfile, Wpath, ObsID)
 		print ObsID, "4.Auto LC Cut 2: Auto Cut."
 
-	xml_file = write_xml(Wpath, ObsID)
-	lcfit_command = 'source /sharefs/hbkg/user/luoqi/home/scan_MEfit_env.sh;sh %s/lcfit/sub_gps_lcfit.sh %s' % (program_tree,
-		xml_file)
+	###xml_file = write_xml(Wpath, ObsID)
+	###lcfit_command = 'source /sharefs/hbkg/user/luoqi/home/scan_MEfit_env.sh;sh %s/lcfit/sub_gps_lcfit.sh %s' % (program_tree,
+	###	xml_file)
 	###lcfit_command = 'source /sharefs/hbkg/user/luoqi/home/scan_MEfit_env.sh;python /sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/lcfit/test_all_typeSub.py %s'%(xml_file)
 	with open(program_tree + '/genlc%s_success.txt'%Erange, 'a+') as f:
 		print>>f,ObsID
-	with open(program_tree + '/lcfit%s_misson.sh'%Erange, 'a+') as f:
-		print>>f,lcfit_command
+	###with open(program_tree + '/lcfit%s_misson.sh'%Erange, 'a+') as f:
+	###	print>>f,lcfit_command
 	###os.system(lcfit_command)
 
 

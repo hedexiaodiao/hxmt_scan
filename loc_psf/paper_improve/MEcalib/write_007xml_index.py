@@ -4,7 +4,7 @@ from astropy.io import fits as pf
 import sys,os
 from xml.etree.ElementTree import ElementTree,Element
 import time
-Program_dir = '/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN'
+###Program_dir = '/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN'
 def mkdir_try(dirname):
     if os.path.exists(dirname) == 0:
         try:
@@ -12,7 +12,7 @@ def mkdir_try(dirname):
         except OSError:
             print('Wrong with make dir:\n'+dirname)
 
-def write_xml(Wpath, ObsID):
+def write_xml(Wpath, ObsID,Program_dir):
 	OrgWpath = Wpath + '/Org'  ###
 	NetWpath = Wpath + '/Net'  ###
 	Org_obspath = "%s/%s" % (OrgWpath, ObsID)  ###
@@ -62,6 +62,7 @@ if __name__ == "__main__":
 	#lclist=["P0101294841"]
 	Wpath = '/sharefs/hbkg/data/SCAN/luoqi/ME'
 	###path= '/sharefs/hbkg/user/saina/data294/P0201013/'
+	Program_dir = '/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN'
 	for i in lclist:
-		write_xml(Wpath, i)
+		write_xml(Wpath, i,Program_dir)
 		print '%s is ok'%i

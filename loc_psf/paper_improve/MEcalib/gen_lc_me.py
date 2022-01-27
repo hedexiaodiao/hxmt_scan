@@ -12,8 +12,7 @@ import sys
 import xlrd
 import os
 
-def gen_lc_me(ehkfile, gtifile, Wpath, ObsID):
-	Program_dir = '/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN'
+def gen_lc_me(ehkfile, gtifile, Wpath, ObsID,Program_dir):
 	OrgWpath = Wpath + '/Org'  ###
 	NetWpath = Wpath + '/Net'  ###
 	Net_ObsWpath = NetWpath + '/' + ObsID
@@ -232,4 +231,4 @@ if __name__ == "__main__":
 	path=Wpath+ObsID+'/ME/'###
 	ehkfile=Wpath+ObsID+"/ehk.fits"
 	gtifile=path+'me_gti.fits'
-	gen_lc_me(ehkfile,gtifile,path,ObsID)
+	gen_lc_me(ehkfile,gtifile,path,ObsID,program_tree)

@@ -18,7 +18,7 @@ To calibrate PSF with Crab in FOV alpha<0.8, beta<0.8.
 No need to distinguish 3 box.
 #  Crab, ra = 83.633, dec = 22.014
     H 1730-333, ra = 263.353, dec = -33.3888
-    GX 354-0, ra = 262.989, dec = -33.835
+    GX 354-0, ra = 262.991, dec = -33.834
 1. calculate crt att with lc time
 2. use Crab ra/dec to get alpha/beta list
 3. return lc time dex

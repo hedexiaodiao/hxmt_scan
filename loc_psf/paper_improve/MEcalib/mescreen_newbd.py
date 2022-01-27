@@ -16,8 +16,8 @@ import Quat as quat
 import src_att_Map
 #######################################class & function(excel)####################################
 
-def bkg_gti(Wpath, ObsID, ft):
-	Program_dir = '/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN'
+
+def bkg_gti(Wpath, ObsID, ft,Program_dir):
 	OrgWpath = Wpath + '/Org'  ###
 	Org_attpath = "%s/%s" % (OrgWpath, 'Att')  ###
 	Org_gtipath = "%s/%s" % (OrgWpath, 'GTI')  ###
@@ -213,7 +213,7 @@ def read_scr(Wpath, ObsID, scrtype):
 	dettb=[dettb0,dettb1,dettb2]
 	return detidor, pior, startt, stopt, tstime, gtime, dett0, dettb
 
-def mescreen_newbd(Wpath, ObsID):
+def mescreen_newbd(Wpath, ObsID,Program_dir):
 	OrgWpath = Wpath + '/Org'  ###
 	Org_obspath = "%s/%s" % (OrgWpath, ObsID)  ###
 	Org_gtipath = "%s/%s" % (OrgWpath, 'GTI')  ###
@@ -229,7 +229,7 @@ def mescreen_newbd(Wpath, ObsID):
 	#Wpath='/hbkg/user/saina/data294/P0211007/'
 	#ObsID='P0211007131'
 	###Program_dir = '/sharefs/hbkg/user/saina/tar'###
-	Program_dir = '/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN'
+
 	file_bdpath = '%s/%s'%(Program_dir,ObsID[:8])
 	path= Wpath +'/' + ObsID###+"/"
 	ft=25
@@ -278,7 +278,7 @@ def mescreen_newbd(Wpath, ObsID):
 	badclass=np.array(num)[(np.array(classnum)>5)]
 
 ###########################################high point/bkg gti####################################
-	new_str,new_stp=bkg_gti(Wpath, ObsID, ft)
+	new_str,new_stp=bkg_gti(Wpath, ObsID, ft,Program_dir)
 
 #####################################mescreen(all pixel)#########################################
 	if (len(new_str)!=0)&((new_stp-new_str).sum()>300):
@@ -531,4 +531,4 @@ if __name__ == "__main__":
 	#Wpath=Wpath+lclist
 	#ehkfile=Wpath+lclist+"/ehk.fits"
 	#gtifile=Wpath+'me_gti.fits'
-	mescreen_newbd(Wpath,ObsID)
+	mescreen_newbd(Wpath,ObsID,program_tree)
