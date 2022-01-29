@@ -51,7 +51,7 @@ def merun_v2(path, Wpath, ObsID,Erange):
 		minpi = 68  ###energy =7 keV
 		maxpi = 290  ###energy = 20 keV
 	elif Erange=='7_40':
-		program_tree = '/sharefs/hbkg/user/luoqi/psfl/calib/7_20/genlc'
+		program_tree = '/sharefs/hbkg/user/luoqi/psfl/calib/7_40/genlc'
 		minpi = 68
 		maxpi = 631
 	else:

@@ -5,7 +5,7 @@ from math import *
 import numpy as np
 from astropy.io import fits as pf
 from readxml import *
-import time 
+import time
 import sys
 import Quat as quat
 #from testroll import *
@@ -119,8 +119,7 @@ alpha_lim = 0.8
 beta_lim = 0.8
 
 box_roll = [60,0,-60]
-roll=box_roll[select_box_dex]/180.0*np.pi
-roll_indx = int(-box_roll[select_box_dex]/60+1)
+###roll_indx = int(-box_roll[select_box_dex]/60+1)
 
 #--------------------read fits-----------------#
 atthd = pf.open(infile)
@@ -173,13 +172,19 @@ for i in range(0,q1_list.shape[0]):
     mtx_list.append(mtx)
     delta_alfa0, delta_beta0, xr, yr, zr = testroll.quat2delta2_rot(mtx, dcm_b_f, xyz, dcm_b_f_rot)
     ###cosz = np.sqrt(zr ** 2 / (xr ** 2 + yr ** 2 + zr ** 2))
-    delta_alfa = fabs(delta_alfa0 * cos(roll) - delta_beta0 * sin(roll))
-    delta_beta = fabs(delta_alfa0 * sin(roll) + delta_beta0 * cos(roll))
-    if delta_alfa<alpha_lim and delta_beta<beta_lim:
+    flag = np.zeros(3)
+    for select_box_dex in range(3):
+        roll = box_roll[select_box_dex] / 180.0 * np.pi
+        delta_alfa_box = fabs(delta_alfa0 * cos(roll) - delta_beta0 * sin(roll))
+        delta_beta_box = fabs(delta_alfa0 * sin(roll) + delta_beta0 * cos(roll))
+        if delta_alfa_box < alpha_lim and delta_beta_box < beta_lim:
+            flag[select_box_dex] = 1
+    tot_flag = np.logical_and(np.logical_and(flag[0],flag[1]),flag[2])
+    if tot_flag:
         accept_dex.append(i)
         accept_time.append(lctime[i])
-        accept_alpha.append(delta_alfa)
-        accept_beta.append(delta_beta)
+        accept_alpha.append(delta_alfa0)
+        accept_beta.append(delta_beta0)
 
 print(accept_time,len(accept_time))
 merge_scal = 5
@@ -197,7 +202,6 @@ else:
     print("No accept god time interval!!")
 
 print(gti_time_up,'\n',gti_time_down)
-###todo:直接保留time、att、lc文件写入fits便可，无须整理gti
 
 lc_list = []
 for j in range(3):

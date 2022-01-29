@@ -29,9 +29,9 @@ for i in range(len(listall)):
     stObsID = ObsID[0:8]
 
     Org_attpath = '/sharefs/hbkg/data/SCAN/luoqi/calib/%s/Org/Att'%Erange
-    Wattfile = "%s/%s_Att.fits" % (Org_attpath, ObsID)
+    Wcutattfile = "%s/%s_cut_Att.fits" % (Org_attpath, ObsID)
 
-    attfile = Wattfile
+    attfile = Wcutattfile
     lc0file = '/sharefs/hbkg/data/SCAN/luoqi/calib/%s/Net/%s/me_lc_box0_small_cut.fits'%(Erange,ObsID)
     lc1file = '/sharefs/hbkg/data/SCAN/luoqi/calib/%s/Net/%s/me_lc_box1_small_cut.fits'%(Erange,ObsID)
     lc2file = '/sharefs/hbkg/data/SCAN/luoqi/calib/%s/Net/%s/me_lc_box2_small_cut.fits'%(Erange,ObsID)
