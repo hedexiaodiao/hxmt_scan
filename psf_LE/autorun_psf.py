@@ -29,9 +29,9 @@ def gen_config(att_list,lc_list,fits_dir,xmlpath='./config_he.xml',instru='LE'):
     instrunodes = tree.findall("Inst_Info/Instrument")
     outfile = fits_dir + "/config_%s.xml"%(instru.lower())
     print(outfile)
-    filenodes[0].text = "\n  " + lc_list[0]+" \n"
-    filenodes[1].text = "\n  " + lc_list[1]+" \n"
-    filenodes[2].text = "\n  " + lc_list[2]+" \n"
+    filenodes[0].text = "\n  " + lc_list[0][:-6]+"0.fits \n"
+    filenodes[1].text = "\n  " + lc_list[1][:-6]+"1.fits \n"
+    filenodes[2].text = "\n  " + lc_list[2][:-6]+"2.fits \n"
     filenodes[3].text = '\n  ' + att_list[0] + ' \n'
     pathnodes[0].text = '\n  ' + fits_dir + '  \n'
     instrunodes[0].text = '\n ' +instru + ' \n'
