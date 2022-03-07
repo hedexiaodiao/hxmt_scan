@@ -35,10 +35,10 @@ else:
 
 year = sys.argv[2]
 
-if len(sys.argv)==4:
-    select_box_dex = int(sys.argv[3])
-else:
-    select_box_dex = 1
+# if len(sys.argv)==4:
+#     select_box_dex = int(sys.argv[3])
+# else:
+#     select_box_dex = 1
 
 #---------------make config------------------------#
 def gen_config(att_list,lc_list,fits_dir,xmlpath='./config_me.xml',instru='LE'):
@@ -87,7 +87,6 @@ evtfile2 = (inpathstr+evtfilestr2)
 evtfile_list = [evtfile0,evtfile1,evtfile2]
 dir_front = outpathstr
 
-evtfile = evtfile_list[select_box_dex]
 
 print ("the scanning pointing file : ",infile)
 print("the lc file :", evtfile_list)
@@ -115,97 +114,103 @@ else:
 ra =  83.633
 dec = 22.014
 
-alpha_lim = 0.8
-beta_lim = 0.8
+alpha_uplim = [-0.1,0.8,0.8]
+alpha_downlim = [-0.8,0.1,0.1]
+beta_uplim = [-0.1,-0.1,-0.1]
+beta_downlim = [-0.8,-0.8,-0.8]
 
 box_roll = [-60,0,60]
 ###roll_indx = int(-box_roll[select_box_dex]/60+1)
 
-#--------------------read fits-----------------#
-atthd = pf.open(infile)
-lchd = pf.open(evtfile)
-atdt = atthd[3].data
-lcdt = lchd[1].data
-qtime = atdt.field(0)
-lctime = lcdt.field(0)
-tstart = lctime[0]
-tstop = lctime[-1]
-
-#----------------quat with lc time------------#
-q1_list = atdt.field(1)[np.in1d(qtime,lctime)]
-q2_list = atdt.field(2)[np.in1d(qtime,lctime)]
-q3_list = atdt.field(3)[np.in1d(qtime,lctime)]
 
 
-#-------------calculate alpha/beta------------#
-mtx_list = []
-alpha_list = []
-beta_list = []
-for i in range(0,q1_list.shape[0]):
-    quat1 = [q1_list[i],q2_list[i],q3_list[i]]
-    mtx_list.append(testroll.quat2mtx(quat1))
-
-psai = 0
-theta = 0
-phi = 0
-rot_quat =  quat.Quat((psai,theta,phi))
-x,y,z = testroll.sph2cart(ra*np.pi/180,dec*np.pi/180,1)
-xyz = [x,y,z]
-dcm_b_f_rot = rot_quat.transform.T
+lc_list = []
 
 
-print('length: lighr curvefile, Quat file >>>',len(lctime),len(q1_list))
+for select_box_dex in range(3):
+    evtfile = evtfile_list[select_box_dex]
+    # --------------------read fits-----------------#
+    atthd = pf.open(infile)
+    lchd = pf.open(evtfile)
+    atdt = atthd[3].data
+    lcdt = lchd[1].data
+    qtime = atdt.field(0)
+    lctime = lcdt.field(0)
+    tstart = lctime[0]
+    tstop = lctime[-1]
 
-atthd.close()
-lchd.close()
-del atthd,lchd
+    # ----------------quat with lc time------------#
+    q1_list = atdt.field(1)[np.in1d(qtime, lctime)]
+    q2_list = atdt.field(2)[np.in1d(qtime, lctime)]
+    q3_list = atdt.field(3)[np.in1d(qtime, lctime)]
+
+    # -------------calculate alpha/beta------------#
+    mtx_list = []
+    alpha_list = []
+    beta_list = []
+    for i in range(0, q1_list.shape[0]):
+        quat1 = [q1_list[i], q2_list[i], q3_list[i]]
+        mtx_list.append(testroll.quat2mtx(quat1))
+
+    psai = 0
+    theta = 0
+    phi = 0
+    rot_quat = quat.Quat((psai, theta, phi))
+    x, y, z = testroll.sph2cart(ra * np.pi / 180, dec * np.pi / 180, 1)
+    xyz = [x, y, z]
+    dcm_b_f_rot = rot_quat.transform.T
+
+    print('length: lighr curvefile, Quat file >>>', len(lctime), len(q1_list))
+
+    atthd.close()
+    lchd.close()
+    del atthd, lchd
 
 
-mtx_list= []
-accept_dex = []
-accept_time = []
-accept_alpha = []
-accept_beta = []
-for i in range(0,q1_list.shape[0]):
-    quat1 = [q1_list[i],q2_list[i],q3_list[i]]
-    mtx = testroll.quat2mtx(quat1)
-    mtx_list.append(mtx)
-    delta_alfa0, delta_beta0, xr, yr, zr = testroll.quat2delta2_rot(mtx, dcm_b_f, xyz, dcm_b_f_rot)
-    ###cosz = np.sqrt(zr ** 2 / (xr ** 2 + yr ** 2 + zr ** 2))
-    flag = np.zeros(3)
-    for select_box_dex in range(3):
+    mtx_list = []
+    accept_dex = []
+    accept_time = []
+    accept_alpha = []
+    accept_beta = []
+    for i in range(0,q1_list.shape[0]):
+        quat1 = [q1_list[i],q2_list[i],q3_list[i]]
+        mtx = testroll.quat2mtx(quat1)
+        mtx_list.append(mtx)
+        delta_alfa0, delta_beta0, xr, yr, zr = testroll.quat2delta2_rot(mtx, dcm_b_f, xyz, dcm_b_f_rot)
+        ###cosz = np.sqrt(zr ** 2 / (xr ** 2 + yr ** 2 + zr ** 2))
+
         roll = box_roll[select_box_dex] / 180.0 * np.pi
         delta_alfa_box = delta_alfa0 * cos(roll) - delta_beta0 * sin(roll)
         delta_beta_box = delta_alfa0 * sin(roll) + delta_beta0 * cos(roll)
-        if delta_alfa_box < alpha_lim and delta_beta_box < beta_lim:
-            flag[select_box_dex] = 1
-    #tot_flag = np.logical_and(np.logical_and(flag[0],flag[1]),flag[2])
-    #if tot_flag:
-        accept_dex.append(i)
-        accept_time.append(lctime[i])
-        accept_alpha.append(delta_alfa0)
-        accept_beta.append(delta_beta0)
+        if delta_alfa_box < alpha_uplim[select_box_dex] and delta_alfa_box > alpha_downlim[select_box_dex] and delta_beta_box < beta_uplim[select_box_dex] and delta_beta_box > beta_downlim[select_box_dex]:
+            flag = 1
+            #tot_flag = np.logical_and(np.logical_and(flag[0],flag[1]),flag[2])
+            #if tot_flag:
+            accept_dex.append(i)
+            accept_time.append(lctime[i])
+            accept_alpha.append(delta_alfa0)
+            accept_beta.append(delta_beta0)
 
-print(accept_time,len(accept_time))
-merge_scal = 5
-tem_accept_time = np.append([0],accept_time[:-1])
-print(tem_accept_time,len(tem_accept_time))
-gti_condi = np.greater(accept_time-tem_accept_time, merge_scal)
-print(gti_condi,len(gti_condi),np.sum(gti_condi))
-accept_time = np.array(accept_time)
-gti_time_up = accept_time[gti_condi]
-if len(gti_time_up)>1:
-    gti_time_down = np.append(gti_time_up[1:],accept_time[-1])
-elif len(gti_time_up)==1:
-    gti_time_down = np.array([accept_time[-1]])
-else:
-    print("No accept god time interval!!")
+    #-------------------用以多段好时间的筛选-----------------
+    print(accept_time,len(accept_time))
+    merge_scal = 5
+    tem_accept_time = np.append([0],accept_time[:-1])
+    print(tem_accept_time,len(tem_accept_time))
+    gti_condi = np.greater(accept_time-tem_accept_time, merge_scal)
+    print(gti_condi,len(gti_condi),np.sum(gti_condi))
+    accept_time = np.array(accept_time)
+    gti_time_up = accept_time[gti_condi]
+    if len(gti_time_up)>1:
+        gti_time_down = np.append(gti_time_up[1:],accept_time[-1])
+    elif len(gti_time_up)==1:
+        gti_time_down = np.array([accept_time[-1]])
+    else:
+        print("No accept god time interval!!")
 
-print(gti_time_up,'\n',gti_time_down)
+    print(gti_time_up,'\n',gti_time_down)
 
-lc_list = []
-for j in range(3):
-    boxfile = pf.open('%s' % (evtfile_list[j]))
+
+    boxfile = pf.open('%s' % (evtfile_list[select_box_dex]))
     t = boxfile[1].data.field(0)
     cts = boxfile[1].data.field(1)
     err = boxfile[1].data.field(2)
@@ -225,15 +230,16 @@ for j in range(3):
     tbhdu2 = pf.BinTableHDU.from_columns(cols2, name='GTI')
     prihdu = pf.PrimaryHDU()
     tbhdulist =  pf.HDUList([prihdu, tbhdu1, tbhdu2])###pf.HDUList([prihdu, tbhdu1, tbhdu2])
-    lc_file = '%s/new%s_%s_box%s.fits' % (dir_front,instr, year, j)
+    lc_file = '%s/new%s_%s_box%s.fits' % (dir_front,instr, year, select_box_dex)
     tbhdulist.writeto(lc_file, clobber=True)
     lc_list.append(lc_file)
+
+    fig = plt.figure(figsize=plt.figaspect(0.5))
+    ax = fig.add_subplot(1, 1, 1)  # , projection='3d')
+    plt.plot(np.array(accept_alpha), np.array(accept_beta), "*")
+    fig.savefig('%s_data_position_box%s.png' % (instr,str(select_box_dex)))
 
 att_list = [infile]
 gen_config(att_list,lc_list,dir_front)
 
 
-fig = plt.figure(figsize=plt.figaspect(0.5))
-ax = fig.add_subplot(1, 1, 1)  # , projection='3d')
-plt.plot(np.array(accept_alpha), np.array(accept_beta),"*")
-fig.savefig('%s_data_position.png'%(instr))
