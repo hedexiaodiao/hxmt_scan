@@ -39,6 +39,13 @@ def get_z_zerr(x0,b0,data_x,data_y,data_z,data_zerr):
         calc_weight = np.sum(inv_sq(nrst4zerr)*inv_sq(dis_array))/np.sum(inv_sq(dis_array))
     return calc_z,calc_weight
 
+def nst_get_z_zerr(x0,y0,data_x,data_y,data_z,data_zerr):
+    mindex = np.argmin((x0-data_x)**2+(y0-data_y)**2)
+    calc_z = data_z[mindex]
+    minzerr = data_zerr[mindex]
+    calc_weight = inv_sq(minzerr)
+    return calc_z,calc_weight
+
 def read_data(instru,box_dex):
     data_x = np.load('%s_alpha_box%s.npy' % (instru,str(box_dex)))
     data_y = np.load('%s_beta_box%s.npy' % (instru, str(box_dex)))
@@ -46,11 +53,7 @@ def read_data(instru,box_dex):
     data_zerr = np.load('%s_cts_box%s.npy' % (instru, str(box_dex)))
     return data_x,data_y,data_z,data_zerr
 
-def get_psf(x,y,instru='ME'):
-    psf_load = np.load('%s_psf_box0.npy'%(instru))
-    data_x = psf_load[:,0]
-    data_y = psf_load[:,1]
-    data_z = psf_load[:,2]
+def get_psf(x,y,data_x,data_y,data_z):
     # data_x = np.load('ME_alpha_box0.npy')
     # data_y = np.load('ME_beta_box0.npy')
     # data_z = np.load('ME_cts_box0.npy')
@@ -60,13 +63,13 @@ def get_psf(x,y,instru='ME'):
         for i in range(x.shape[0]):
             if len(x.shape)>1:
                 for j in range(x.shape[1]):
-                    calc_z, calc_weight = get_z_zerr(x[i,j], y[i,j], data_x, data_y, data_z, data_zerr)
+                    calc_z, calc_weight = nst_get_z_zerr(x[i,j], y[i,j], data_x, data_y, data_z, data_zerr)
                     psf_value[i,j] = calc_z
             else:
-                calc_z, calc_weight = get_z_zerr(x[i], y[i], data_x, data_y, data_z, data_zerr)
+                calc_z, calc_weight = nst_get_z_zerr(x[i], y[i], data_x, data_y, data_z, data_zerr)
                 psf_value[i] = calc_z
     else:
-        calc_z, calc_weight = get_z_zerr(x, y, data_x, data_y, data_z, data_zerr)
+        calc_z, calc_weight = nst_get_z_zerr(x, y, data_x, data_y, data_z, data_zerr)
         psf_value = calc_z
     # psf_value = psf_value + stand_psfmodel(x,y,instru=instru)
     return psf_value
@@ -86,7 +89,7 @@ def get_bound(instru):
         dcm_b_f = np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]])
     return Talfa_bound, Tbeta_bound
 
-def stand_psfmodel(delta_alfa0, delta_beta0, instru ='ME', box_dex=0):
+def stand_psfmodel(delta_alfa0, delta_beta0,data_x,data_y,data_z, instru ='ME'):
     PI=3.14159265358979323846
     a_bound, b_bound = get_bound(instru)
     # roll_indx = box_dex#int(-parameter[1]/60+1)###用以确定机箱
@@ -103,14 +106,14 @@ def stand_psfmodel(delta_alfa0, delta_beta0, instru ='ME', box_dex=0):
             delta_beta / 180 * PI) + 1))
     return factor
 
-def plot_psf(func, funcname,instru='ME'):
+def plot_psf(func, funcname,data_x,data_y,data_z,instru='ME'):
     fig = plt.figure(figsize=plt.figaspect(0.5))
     ax = fig.add_subplot(1, 1, 1)  # , projection='3d')
     a_bound,b_bound = get_bound(instru)
     alpha = np.arange(-a_bound, a_bound, 0.01)
     beta = np.arange(-b_bound, b_bound, 0.01)
     alpha, beta = np.meshgrid(alpha, beta)
-    Z0 = func(alpha, beta)
+    Z0 = func(alpha, beta,data_x,data_y,data_z)
     # Z1 = correct_psfmodel(alpha,beta)
     cmap = cm.coolwarm
     surf = ax.contourf(alpha, beta, Z0, cmap=cmap)  # , rstride=1, cstride=1, cmap=cm.coolwarm,
@@ -119,25 +122,30 @@ def plot_psf(func, funcname,instru='ME'):
     fig.savefig('{:s}_{:s}_psf.png'.format(instru, funcname))
     return Z0
 
-plot_psf(stand_psfmodel, 'stand')
-correct_psf = plot_psf(get_psf, 'correct')
+# plot_psf(stand_psfmodel, 'stand')
+# correct_psf = plot_psf(get_psf, 'correct')
 
 
-def plot_delta(instru='ME'):
+def plot_delta(data_x,data_y,data_z,instru='ME'):
     fig = plt.figure(figsize=plt.figaspect(0.5))
     ax = fig.add_subplot(1, 1, 1)  # , projection='3d')
     a_bound, b_bound = get_bound(instru)
     alpha = np.arange(-a_bound, a_bound, 0.01)
     beta = np.arange(-b_bound, b_bound, 0.01)
     alpha, beta = np.meshgrid(alpha, beta)
-    Z0 = stand_psfmodel(alpha, beta)
-    Z1 = get_psf(alpha, beta)
+    Z0 = stand_psfmodel(alpha, beta,data_x,data_y,data_z)
+    Z1 = get_psf(alpha, beta,data_x,data_y,data_z)
     cmap = cm.coolwarm
     surf = ax.contourf(alpha, beta, Z0 - Z1, cmap=cmap)  # , rstride=1, cstride=1, cmap=cm.coolwarm,
     # linewidth=0, antialiased=False)
     plt.colorbar(surf, orientation='horizontal')
     fig.savefig('{:s}_psf_delta.png'.format(instru))
 
-plot_psf(stand_psfmodel, 'stand')
-correct_psf = plot_psf(get_psf, 'correct')
-plot_delta('ME')
+instru = 'ME'
+psf_load = np.load('%s_psf_box0.npy'%(instru))
+data_x = psf_load[:,0]
+data_y = psf_load[:,1]
+data_z = psf_load[:,2]
+plot_psf(stand_psfmodel, 'stand',data_x,data_y,data_z)
+correct_psf = plot_psf(get_psf, 'correct',data_x,data_y,data_z)
+plot_delta(data_x,data_y,data_z,'ME')

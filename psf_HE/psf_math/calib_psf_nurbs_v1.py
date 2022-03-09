@@ -21,6 +21,26 @@ from geomdl import operations
 # Surface exported from your CAD software
 #
 
+#----------左上--------
+def get_p1_vw(x,y,data_x,data_y,data_z):
+    save_dex = np.logical_and(x >= data_x, y <= data_y)
+    save_x = data_x[save_dex]
+    save_y = data_y[save_dex]
+    save_z = data_z[save_dex]
+    if len(save_x)>=2:
+        flag_xx = 1
+        flag_x = 1
+        value = 0
+    elif len(save_x) ==1:
+        flag_xx = 0
+        flag_x = 1
+
+    else:
+        flag_xx = 0
+        flag_x = 0
+        weight = 0
+    return 0
+
 #-----------平面距离----------
 def dis_surf(a0,b0,a1,b1):
     return ((a0-a1)**2 + (b0-b1)**2)**0.5
@@ -44,6 +64,10 @@ def get_bound(instru):
         dcm_b_f = np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]])
     return Talfa_bound, Tbeta_bound
 
+def f_tan(x,x_bound):
+    y = 1 - np.tan(np.deg2rad(x))/np.tan(np.deg2rad(x_bound))
+    return y
+
 #-------------长方形沿长短边等距划分-----------
 def get_rectangle_divd(a_bound,b_bound,p_size_u,p_size_v):
     delta_x = 2*a_bound/(p_size_u-1)
@@ -63,20 +87,22 @@ def get_nearst4pts(x0,b0,data_x,data_y):
     dis_array = dis_all[dex_array]
     return dis_array,dex_array
 
-def get_z_zerr(x0,b0,data_x,data_y,data_z,data_zerr):
+def get_z_zerr(x0,b0,data_x,data_y,data_z,data_zerr,a_bound,b_bound):
     dis_array,dex_array = get_nearst4pts(x0,b0,data_x,data_y)
     nrst4z= data_z[dex_array]
     nrst4zerr = data_zerr[dex_array]
+    print('dis_array, dex_array,nrst4z:',dis_array, dex_array,nrst4z)
+    x_bound = (a_bound**2 + b_bound**2)**0.5
     if np.min(dis_array)==0:
         calc_z = data_z[dex_array[0]]
         calc_weight = data_zerr[dex_array[0]]
     else:
-        calc_z = np.sum(inv_sq(nrst4zerr)*inv_sq(dis_array)*nrst4z)/np.sum(inv_sq(nrst4zerr)*inv_sq(dis_array))
-        calc_weight = np.sum(inv_sq(nrst4zerr)*inv_sq(dis_array))/np.sum(inv_sq(dis_array))
+        calc_z = np.sum(f_tan(dis_array,x_bound)*nrst4z)/np.sum(f_tan(dis_array,x_bound))
+        calc_weight = np.sum(inv_sq(nrst4zerr)*f_tan(dis_array,x_bound))/np.sum(f_tan(dis_array,x_bound))
     return calc_z,calc_weight
 
 #-------------搜索data中最接近ctrl_xy的四个点，误差平方反比作为权重、距离平方反比插值数值--------
-def get_ctrlpts(data_x,data_y,data_z,data_zerr,ctrl_x,ctrl_y):
+def get_ctrlpts(data_x,data_y,data_z,data_zerr,ctrl_x,ctrl_y,a_bound,b_bound):
     lenx = len(ctrl_x)
     leny = len(ctrl_y)
     p_ctrlpts = np.zeros((lenx*leny,3))
@@ -84,7 +110,7 @@ def get_ctrlpts(data_x,data_y,data_z,data_zerr,ctrl_x,ctrl_y):
     for i in range(lenx):
         for j in range(leny):
             ctrl_dex = j*lenx + i
-            calc_z, calc_weight = get_z_zerr(ctrl_x[i],ctrl_y[j],data_x,data_y,data_z,data_zerr)
+            calc_z, calc_weight = get_z_zerr(ctrl_x[i],ctrl_y[j],data_x,data_y,data_z,data_zerr,a_bound,b_bound)
             p_ctrlpts[ctrl_dex,0] = ctrl_x[i]
             p_ctrlpts[ctrl_dex,1] = ctrl_y[j]
             p_ctrlpts[ctrl_dex,2] = calc_z
@@ -128,6 +154,7 @@ def psf_render(instru,box_dex,p_ctrlpts,p_weights,p_size_u, p_size_v,p_degree_u,
 
     # Create a NURBS surface instance
     surf = NURBS.Surface()
+    print('step 1')
 
     # Fill the surface object
     surf.degree_u = p_degree_u
@@ -135,7 +162,7 @@ def psf_render(instru,box_dex,p_ctrlpts,p_weights,p_size_u, p_size_v,p_degree_u,
     surf.set_ctrlpts(n_ctrlptsw, p_size_u, p_size_v)
     surf.knotvector_u = n_knotvector_u
     surf.knotvector_v = n_knotvector_v
-
+    print('step 2')
     ###决定了按照u/v的细分程度
     # Set evaluation delta
     surf.delta = 0.025
@@ -147,11 +174,11 @@ def psf_render(instru,box_dex,p_ctrlpts,p_weights,p_size_u, p_size_v,p_degree_u,
     # Set visualization component
     vis_comp = VisMPL.VisSurface()
     surf.vis = vis_comp
-
+    print('step 3')
     surf_points = surf.evalpts
     print(np.array(surf_points).shape)
     # Render the surface
-    # surf.render()
+    surf.render()
     np.save('%s_psf_box%s' % (instru, str(box_dex)),np.array(surf_points))
     np.savetxt('%s_psf_alpha_box%s.txt' % (instru, str(box_dex)), np.array(surf_points)[:,0])
     np.savetxt('%s_psf_beta_box%s.txt' % (instru, str(box_dex)), np.array(surf_points)[:,1])
@@ -174,39 +201,63 @@ data_zerr = np.sqrt(np.abs(data_z))
 condi = data_z > 0
 data_z = np.where(condi, data_z, np.zeros_like(data_z))
 
-center_z,center_zerr = get_z_zerr(0,0,data_x,data_y,data_z,data_zerr)
-print(center_z,center_zerr)
+center_z,center_zerr = get_z_zerr(0,0,data_x,data_y,data_z,data_zerr,a_bound,b_bound)
+print('center_z,np.max(data_z)',center_z,np.max(data_z))
 
 #----------standard model---------
-condi = np.logical_and(data_x < a_bound, data_y < b_bound)
-rad_data_x = np.deg2rad(np.abs(data_x))
-rad_data_y = np.deg2rad(np.abs(data_y))
-rad_a_bound = np.deg2rad(a_bound)
-rad_b_bound = np.deg2rad(b_bound)
-factor = np.where(condi, (1.0 - np.tan(rad_data_x) / np.tan(rad_a_bound)) * \
-                          (1.0 - np.tan(rad_data_y) / np.tan(rad_b_bound)),
-                          np.zeros_like(rad_data_x))
-factor = factor /(np.sqrt(np.tan(rad_data_x)**2 + np.tan(rad_data_y)**2 + 1))
-#stand_z = np.max(data_z)*factor
+# condi = np.logical_and(data_x < a_bound, data_y < b_bound)
+# rad_data_x = np.deg2rad(np.abs(data_x))
+# rad_data_y = np.deg2rad(np.abs(data_y))
+# rad_a_bound = np.deg2rad(a_bound)
+# rad_b_bound = np.deg2rad(b_bound)
+# factor = np.where(condi, (1.0 - np.tan(rad_data_x) / np.tan(rad_a_bound)) * \
+#                           (1.0 - np.tan(rad_data_y) / np.tan(rad_b_bound)),
+#                           np.zeros_like(rad_data_x))
+# factor = factor /(np.sqrt(np.tan(rad_data_x)**2 + np.tan(rad_data_y)**2 + 1))
+# #stand_z = np.max(data_z)*factor
+#
+#
+# data_z = data_z/center_z
+# # data_z = data_z - factor
+# data_zerr = np.ones_like(data_zerr/np.max(data_zerr))
+# print(data_z)
+# print(np.max(data_z),np.min(data_z),np.mean(data_z))
+# print(data_zerr)
+#
+# p_size_u = 50
+# p_size_v = 50
+# ctrl_x, ctrl_y = get_rectangle_divd(a_bound,b_bound,p_size_u,p_size_v)
+# p_ctrlpts, p_weights = get_ctrlpts(data_x,data_y,data_z,data_zerr,ctrl_x,ctrl_y,a_bound,b_bound)
+# print(np.max(p_ctrlpts[:,2]),np.min(p_ctrlpts[:,2]),np.mean(p_ctrlpts[:,2]))
+# p_degree_u = 2
+# p_degree_v = 2
+# psf_render(instru,box_dex,p_ctrlpts,p_weights,p_size_u, p_size_v, p_degree_u, p_degree_v)
+#
+# psf = np.load('%s_psf_box%s.npy' % (instru, str(box_dex)))
+# print(np.max(psf[:,2]),np.min(psf[:,2]),np.mean(psf[:,2]))
+# print(psf)
 
+from geomdl import fitting
+from geomdl.visualization import VisMPL as vis
 
-data_z = data_z/np.max(data_z)
-# data_z = data_z - factor
-data_zerr = np.ones_like(data_zerr/np.max(data_zerr))
-print(data_z)
-print(np.max(data_z),np.min(data_z),np.mean(data_z))
-print(data_zerr)
+# The NURBS Book Ex9.1
+points = [[0, 0, 0], [0, 4, 0], [0, 8, -3],[0, 10, -2],
+                  [2, 0, 6], [2, 4, 0], [2, 8, 0],[2, 10, 2],
+                  [4, 0, 0], [4, 4, 0], [4, 8, 3],[4, 10, 2],
+                  [6, 0, 0], [6, 4, -3], [6, 8, 0],[6, 10, 2],
+                  [8, 0, 2], [8, 4, 1], [8, 8, 1],[8, 10, 2]]
+##degree = 3  # cubic curve
+size_u = 4
+size_v = 4
+degree_u = 2
+degree_v = 2
 
-p_size_u = 200
-p_size_v = 200
-ctrl_x, ctrl_y = get_rectangle_divd(a_bound,b_bound,p_size_u,p_size_v)
-p_ctrlpts, p_weights = get_ctrlpts(data_x,data_y,data_z,data_zerr,ctrl_x,ctrl_y)
-print(np.max(p_ctrlpts[:,2]),np.min(p_ctrlpts[:,2]),np.mean(p_ctrlpts[:,2]))
-p_degree_u = 2
-p_degree_v = 2
-psf_render(instru,box_dex,p_ctrlpts,p_weights,p_size_u, p_size_v, p_degree_u, p_degree_v)
+# Do global curve approximation
+surf = fitting.approximate_surface(points, size_u,size_v,degree_u,degree_v)
 
-psf = np.load('%s_psf_box%s.npy' % (instru, str(box_dex)))
-print(np.max(psf[:,2]),np.min(psf[:,2]),np.mean(psf[:,2]))
-print(psf)
-
+# Plot the interpolated curve
+surf.delta = 0.01
+surf.vis = vis.VisSurface()
+surf.render()
+surf_points = np.array(surf.evalpts)
+print(surf_points,surf_points.shape)
