@@ -1,11 +1,30 @@
+#!/anaconda3/envs/FEALPy/bin python3.8
+# -*- coding: utf-8 -*-
+# ---
+# @Software: PyCharm
+# @File: plot_fitdata.py
+# @Author: luoqi
+# @Institution: Institute of High Energy Physics, CAS
+# @E-mail: woshiluoqi123@outlook.com, luoqi@ihep.ac.cn
+# @Site: 
+# @Time: 1月 21, 2022
+# ---
 import matplotlib
 matplotlib.use("agg")
-from xspec import *
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.gridspec as gridspec
+
+npy_name = "A02"
+lcnums = ['me_b0','me_b1','me_b2']
+
+import matplotlib
+matplotlib.use("agg")
 from math import *
 import numpy as np
 from astropy.io import fits as pf
 from readxml import *
-import time 
+import time
 import sys
 import Quat as quat
 #from testroll import *
@@ -13,18 +32,85 @@ import testroll
 from xml.etree.ElementTree import ElementTree,Element
 import matplotlib.pyplot as plt
 
-'''
-To calibrate PSF with Crab in FOV alpha<0.8, beta<0.8.
-No need to distinguish 3 box.
-#  Crab, ra = 83.633, dec = 22.014
-    H 1730-333, ra = 263.353, dec = -33.3888
-    GX 354-0, ra = 262.991, dec = -33.834
-1. calculate crt att with lc time
-2. use Crab ra/dec to get alpha/beta list
-3. return lc time dex
-4. merge time for use 
-'''
+alpha_lim = 1.6
+alpha_uplim = [alpha_lim,alpha_lim,alpha_lim]
+alpha_downlim = [-alpha_lim,-alpha_lim,-alpha_lim]
+beta_lim = 0.8
+beta_uplim = [beta_lim,beta_lim,beta_lim]
+beta_downlim = [-beta_lim,-beta_lim,-beta_lim]
 
+
+def stand_model(data_x, data_y, a_bound, b_bound):
+    data_x = np.array(data_x)
+    data_y = np.array(data_y)
+    # ----------standard model---------
+    print(data_x.shape,data_y.shape,data_x,data_y)
+    condi = np.logical_and(data_x < a_bound, data_y < b_bound)
+    rad_data_x = np.deg2rad(np.abs(data_x))
+    rad_data_y = np.deg2rad(np.abs(data_y))
+    rad_a_bound = np.deg2rad(a_bound)
+    rad_b_bound = np.deg2rad(b_bound)
+    factor = np.where(condi, (1.0 - np.tan(rad_data_x) / np.tan(rad_a_bound)) * \
+                      (1.0 - np.tan(rad_data_y) / np.tan(rad_b_bound)),
+                      np.zeros_like(rad_data_x))
+    factor = factor / (np.sqrt(np.tan(rad_data_x) ** 2 + np.tan(rad_data_y) ** 2 + 1))
+    return factor
+
+
+def get_bound(instru):
+    if instru == 'HE':
+        Talfa_bound = 5.7
+        Tbeta_bound = 1.1
+        dcm_b_f = np.array([[0, 1, 0], [0, 0, 1], [1, 0, 0]])
+    elif instru == 'ME':
+        Talfa_bound = 4
+        Tbeta_bound = 1
+        dcm_b_f = np.array([[0, 0, -1], [0, 1, 0], [1, 0, 0]])
+    elif instru == 'LE':
+        Talfa_bound = 6
+        Tbeta_bound = 1.6
+        dcm_b_f = np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]])
+    return Talfa_bound, Tbeta_bound
+
+
+def plot_origindata(norm, yerr, x_values, alpha, beta, instru):
+    a_bound, b_bound = get_bound(instru)
+    factor = stand_model(alpha, beta, a_bound, b_bound)
+    psf = factor * np.max(cts) / np.max(factor)
+
+    sigma = (cts - psf) / yerr
+    print(len(alpha))
+    ###x_values = np.arange(0, len(alpha))
+    print(x_values)
+    '''
+    fig = plt.figure(figsize=plt.figaspect(0.5))
+    ax = fig.add_subplot(1, 1, 1)  # , projection='3d')
+    plt.plot(x_values, alpha,label='alpha')
+    plt.plot(x_values, beta,label='beta')
+    plt.errorbar(x_values, norm, yerr,label='lc')
+    plt.plot(x_values,psf,label='psf')
+    plt.legend()
+    '''
+    color_tem = 'black'
+    fig = plt.figure(figsize=(30, 10))  # 10,20
+    gs = gridspec.GridSpec(6, 3)
+    ax1 = plt.subplot(gs[0:3, :])
+    ax2 = plt.subplot(gs[3:5, :], sharex=ax1)
+    ax3 = plt.subplot(gs[5:, :], sharex=ax1)
+    gs.update(hspace=0)
+    ax2.plot(x_values, alpha, '.', label='alpha')
+    ax2.plot(x_values, beta, '.', label='beta')
+    ax1.errorbar(x_values, norm, yerr, label='lc', fmt='_', ecolor=color_tem, mfc=color_tem, mfcalt=color_tem,
+                 mec=color_tem
+                 , markersize=6, elinewidth=1, capsize=0)
+    ax1.plot(x_values, psf, '.', label='psf')
+    ax3.errorbar(x_values, sigma, 1, label='sigma', fmt='_', ecolor=color_tem, mfc=color_tem, mfcalt=color_tem,
+                 mec=color_tem
+                 , markersize=6, elinewidth=1, capsize=0)
+    ax1.legend()
+    ax2.legend()
+    ax3.legend()
+    fig.savefig('%s_alim%s_blim%s.png' % (evtfile[:-5],alpha_lim,beta_lim))
 
 if len(sys.argv)<2:
     print("Need the config file!")
@@ -33,12 +119,12 @@ if len(sys.argv)<2:
 else:
     cfg = sys.argv[1]
 
-year = sys.argv[2]
+# year = sys.argv[2]
 
-# if len(sys.argv)==4:
-#     select_box_dex = int(sys.argv[3])
-# else:
-#     select_box_dex = 1
+if len(sys.argv)==4:
+    select_box_dex = int(sys.argv[3])
+else:
+    select_box_dex = 1
 
 #---------------make config------------------------#
 def gen_config(att_list,lc_list,fits_dir,xmlpath='./config_me.xml',instru='LE'):
@@ -87,6 +173,7 @@ evtfile2 = (inpathstr+evtfilestr2)
 evtfile_list = [evtfile0,evtfile1,evtfile2]
 dir_front = outpathstr
 
+evtfile = evtfile_list[select_box_dex]
 
 print ("the scanning pointing file : ",infile)
 print("the lc file :", evtfile_list)
@@ -114,18 +201,11 @@ else:
 ra =  83.633
 dec = 22.014
 
-alpha_uplim = [-0.1,0.8,0.8]
-alpha_downlim = [-0.8,0.1,0.1]
-beta_uplim = [-0.1,-0.1,-0.1]
-beta_downlim = [-0.8,-0.8,-0.8]
 
-box_roll = [60,0,-60]#todo:check it
-###roll_indx = int(-box_roll[select_box_dex]/60+1)
-
-
-
+box_roll = [60,0,-60]
+roll=box_roll[select_box_dex]/180.0*np.pi
+roll_indx = int(-box_roll[select_box_dex]/60+1)
 lc_list = []
-
 
 for select_box_dex in range(3):
     evtfile = evtfile_list[select_box_dex]
@@ -166,7 +246,7 @@ for select_box_dex in range(3):
     lchd.close()
     del atthd, lchd
 
-
+    #------------------select--------------
     mtx_list = []
     accept_dex = []
     accept_time = []
@@ -191,26 +271,7 @@ for select_box_dex in range(3):
             accept_alpha.append(delta_alfa0)
             accept_beta.append(delta_beta0)
 
-    #-------------------用以多段好时间的筛选-----------------
-    print(accept_time,len(accept_time))
-    merge_scal = 5
-    tem_accept_time = np.append([0],accept_time[:-1])
-    print(tem_accept_time,len(tem_accept_time))
-    gti_condi = np.greater(accept_time-tem_accept_time, merge_scal)
-    print(gti_condi,len(gti_condi),np.sum(gti_condi))
-    accept_time = np.array(accept_time)
-    gti_time_up = accept_time[gti_condi]
-    if len(gti_time_up)>1:
-        gti_time_down = np.append(gti_time_up[1:],accept_time[-1])
-    elif len(gti_time_up)==1:
-        gti_time_down = np.array([accept_time[-1]])
-    else:
-        print("No accept god time interval!!")
-
-    print(gti_time_up,'\n',gti_time_down)
-
-
-    boxfile = pf.open('%s' % (evtfile_list[select_box_dex]))
+    boxfile = pf.open('%s' % (evtfile))
     t = boxfile[1].data.field(0)
     cts = boxfile[1].data.field(1)
     err = boxfile[1].data.field(2)
@@ -218,28 +279,18 @@ for select_box_dex in range(3):
     mask = np.in1d(t, accept_time)
     print("before select:",len(t))
     print("after select:",len(accept_time))
-    col1 = pf.Column(name='Time', format='D', array=t[mask])
-    col2 = pf.Column(name='counts', format='D', array=cts[mask])
-    col3 = pf.Column(name='error', format='D', array=err[mask])
-    ###col4 = pf.Column(name='bkg', format='D', array=bkg[mask])
-    cols1 = pf.ColDefs([col1, col2, col3])###pf.ColDefs([col1, col2, col3, col4])
-    col1 = pf.Column(name='TSTART', format='D', array=gti_time_up)
-    col2 = pf.Column(name='TSTOP', format='D', array=gti_time_down)
-    cols2 = pf.ColDefs([col1, col2])
-    tbhdu1 = pf.BinTableHDU.from_columns(cols1, name='LC')
-    tbhdu2 = pf.BinTableHDU.from_columns(cols2, name='GTI')
-    prihdu = pf.PrimaryHDU()
-    tbhdulist =  pf.HDUList([prihdu, tbhdu1, tbhdu2])###pf.HDUList([prihdu, tbhdu1, tbhdu2])
-    lc_file = '%s/new%s_%s_box%s.fits' % (dir_front,instr, year, select_box_dex)
-    tbhdulist.writeto(lc_file, clobber=True)
-    lc_list.append(lc_file)
+    t = t[mask]
+    cts = cts[mask]
+    err = err[mask]
+    plot_origindata(norm=cts, yerr=err, x_values=t, alpha=accept_alpha, beta=accept_beta, instru=instr)
 
-    fig = plt.figure(figsize=plt.figaspect(0.5))
-    ax = fig.add_subplot(1, 1, 1)  # , projection='3d')
-    plt.plot(np.array(accept_alpha), np.array(accept_beta), "*")
-    fig.savefig('%s_data_position_box%s.png' % (instr,str(select_box_dex)))
 
-att_list = [infile]
-gen_config(att_list,lc_list,dir_front)
+# att_list = [infile]
+# gen_config(att_list,lc_list,dir_front)
 
+
+# fig = plt.figure(figsize=plt.figaspect(0.5))
+# ax = fig.add_subplot(1, 1, 1)  # , projection='3d')
+# plt.plot(np.array(accept_alpha), np.array(accept_beta),"*")
+# fig.savefig('%s_data_position.png'%(instr))
 

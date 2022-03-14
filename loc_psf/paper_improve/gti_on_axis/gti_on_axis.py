@@ -119,7 +119,7 @@ dec = 22.014
 alpha_lim = 0.8
 beta_lim = 0.8
 
-box_roll = [-60,0,60]
+box_roll = [60,0,-60]#todo:check it
 roll=box_roll[select_box_dex]/180.0*np.pi
 roll_indx = int(-box_roll[1]/60+1)
 

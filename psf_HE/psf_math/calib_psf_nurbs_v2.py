@@ -119,7 +119,7 @@ def get_z_zerr(x0,y0,data_x,data_y,data_z,data_zerr,a_bound,b_bound):
     zerr_array = np.zeros(4)
     weight_array = np.zeros(4)
     for i in range(4):
-        value_array[i],zerr_array[i],weight_array[i] =get_pn_vw(x0, y0, data_x, data_y, data_z,data_zerr, x_bound, i+1)
+        value_array[i],zerr_array[i],weight_array[i] = get_pn_vw(x0, y0, data_x, data_y, data_z,data_zerr, x_bound, i+1)
 
     ##print(value_array,weight_array)
 
@@ -128,7 +128,7 @@ def get_z_zerr(x0,y0,data_x,data_y,data_z,data_zerr,a_bound,b_bound):
         calc_weight = zerr_array[weight_array==1]
     else:
         calc_z = np.sum(value_array*weight_array)/np.sum(weight_array)
-        calc_weight = np.sum(zerr_array*weight_array)/np.sum(weight_array)
+        calc_weight = np.sqrt(np.sum((zerr_array**2)*weight_array)/np.sum(weight_array))
     return calc_z,calc_weight
 
 #-------------搜索data中最接近ctrl_xy的四个点，误差平方反比作为权重、距离平方反比插值数值--------
@@ -204,7 +204,7 @@ def psf_render(instru,box_dex,p_ctrlpts,p_weights,p_size_u, p_size_v,p_degree_u,
     print('step 2')
     ###决定了按照u/v的细分程度
     # Set evaluation delta
-    surf.delta = 0.0025
+    surf.delta = 0.01
 
     ###结点细化在psf标定较为有用
     # Refine knot vectors
@@ -214,14 +214,11 @@ def psf_render(instru,box_dex,p_ctrlpts,p_weights,p_size_u, p_size_v,p_degree_u,
     vis_comp = VisMPL.VisSurface()
     surf.vis = vis_comp
     print('step 3')
-    surf_points = surf.evalpts
+    surf_points = np.array(surf.evalpts)
     print(np.array(surf_points).shape)
     # Render the surface
     # surf.render()
-    np.save('%s_psf_box%s' % (instru, str(box_dex)),np.array(surf_points))
-    np.savetxt('%s_psf_alpha_box%s.txt' % (instru, str(box_dex)), np.array(surf_points)[:,0])
-    np.savetxt('%s_psf_beta_box%s.txt' % (instru, str(box_dex)), np.array(surf_points)[:,1])
-    np.savetxt('%s_psf_value_box%s.txt' % (instru, str(box_dex)), np.array(surf_points)[:,2])
+    return surf_points
 
 def read_data(instru,box_dex):
     data_x = np.load('%s_alpha_box%s.npy' % (instru,str(box_dex)))
@@ -230,34 +227,40 @@ def read_data(instru,box_dex):
     data_zerr = np.load('%s_cts_box%s.npy' % (instru, str(box_dex)))
     return data_x,data_y,data_z,data_zerr
 
-def run_main(instru,box_dex):
-    data_x,data_y,data_z,data_zerr = read_data(instru,box_dex)
-    a_bound,b_bound = get_bound(instru)
-
-    #-------tem for wrong zerr-------
-    data_zerr = np.sqrt(np.abs(data_z))
-    condi = data_z > 0
-    data_z = np.where(condi, data_z, np.zeros_like(data_z))
-
-    center_z,center_zerr = get_z_zerr(0,0,data_x,data_y,data_z,data_zerr,a_bound,b_bound)
-    print('center_z,np.max(data_z)',center_z,np.max(data_z))
-
-    #----------standard model---------
+def stand_model(data_x,data_y,a_bound,b_bound):
+    # ----------standard model---------
     condi = np.logical_and(data_x < a_bound, data_y < b_bound)
     rad_data_x = np.deg2rad(np.abs(data_x))
     rad_data_y = np.deg2rad(np.abs(data_y))
     rad_a_bound = np.deg2rad(a_bound)
     rad_b_bound = np.deg2rad(b_bound)
     factor = np.where(condi, (1.0 - np.tan(rad_data_x) / np.tan(rad_a_bound)) * \
-                              (1.0 - np.tan(rad_data_y) / np.tan(rad_b_bound)),
-                              np.zeros_like(rad_data_x))
-    factor = factor /(np.sqrt(np.tan(rad_data_x)**2 + np.tan(rad_data_y)**2 + 1))
+                      (1.0 - np.tan(rad_data_y) / np.tan(rad_b_bound)),
+                      np.zeros_like(rad_data_x))
+    factor = factor / (np.sqrt(np.tan(rad_data_x) ** 2 + np.tan(rad_data_y) ** 2 + 1))
+    return factor
+
+def run_main(instru,box_dex):
+    data_x,data_y,data_z,data_zerr = read_data(instru,box_dex)
+    a_bound,b_bound = get_bound(instru)
+
+    #-------tem for wrong zerr-------
+    data_zerr = np.sqrt(np.abs(data_z))
+    data_zerr = data_zerr / data_z  # np.ones_like(data_zerr/np.max(data_zerr))
+
+    condi = data_z > 0
+    data_z = np.where(condi, data_z, np.zeros_like(data_z))
+
+    center_z,center_zerr = get_z_zerr(0,0,data_x,data_y,data_z,data_zerr,a_bound,b_bound)
+    print('center_z,np.max(data_z)',center_z,np.max(data_z))
+
+    factor = stand_model(data_x,data_y,a_bound,b_bound)
     #stand_z = np.max(data_z)*factor
 
-
+    #---------------------以stand_model为基准----------------------
     data_z = data_z/np.max(data_z)
-    # data_z = data_z - factor
-    data_zerr = np.ones_like(data_zerr/np.max(data_zerr))
+    data_z = data_z - factor
+
     print(data_z)
     print(np.max(data_z),np.min(data_z),np.mean(data_z))
     print(data_zerr)
@@ -267,13 +270,21 @@ def run_main(instru,box_dex):
     ctrl_x, ctrl_y = get_rectangle_divd(a_bound,b_bound,p_size_u,p_size_v)
     p_ctrlpts, p_weights = get_ctrlpts(data_x,data_y,data_z,data_zerr,ctrl_x,ctrl_y,a_bound,b_bound)
     print(np.max(p_ctrlpts[:,2]),np.min(p_ctrlpts[:,2]),np.mean(p_ctrlpts[:,2]))
-    p_degree_u = 30
-    p_degree_v = 30
-    psf_render(instru,box_dex,p_ctrlpts,p_weights,p_size_u, p_size_v, p_degree_u, p_degree_v)
+    p_degree_u = 2
+    p_degree_v = 2
+    surf_points = psf_render(instru,box_dex,p_ctrlpts,p_weights,p_size_u, p_size_v, p_degree_u, p_degree_v)
+    factor_points = stand_model(surf_points[:,0],surf_points[:,1],a_bound,b_bound)
 
-    psf = np.load('%s_psf_box%s.npy' % (instru, str(box_dex)))
-    print(np.max(psf[:,2]),np.min(psf[:,2]),np.mean(psf[:,2]))
-    print(psf)
+    psf_xy = surf_points
+    psf_xy[:,2] = psf_xy[:,2] + factor_points
+
+    np.save('%s_psf_box%s' % (instru, str(box_dex)), psf_xy)
+    np.savetxt('%s_psf_alpha_box%s.txt' % (instru, str(box_dex)), psf_xy[:, 0])
+    np.savetxt('%s_psf_beta_box%s.txt' % (instru, str(box_dex)), psf_xy[:, 1])
+    np.savetxt('%s_psf_value_box%s.txt' % (instru, str(box_dex)), psf_xy[:, 2])
+    #np.load('%s_psf_box%s.npy' % (instru, str(box_dex)))
+    print(np.max(psf_xy[:,2]),np.min(psf_xy[:,2]),np.mean(psf_xy[:,2]))
+    print(psf_xy)
 
 instru = 'ME'
 for box_dex in range(3):

@@ -29,7 +29,9 @@ if __name__ == '__main__':
     #current_dir = r'G:\ihep5\idl_psf_location\moreLE_2_6_ME_7_20_100w'
     #current_dir = r'G:\ihep5\idl_psf_location\right_LE_2-6_ME_7-20_10w'
     ###current_dir = r'G:\ihep5\idl_psf_location\right_LE_2-6_10w'
-    current_dir = r'G:\ihep5\idl_psf_location\right_LE_2-6_ME_7-12_10w'
+    ##current_dir = r'G:\ihep5\idl_psf_location\right_LE_2-6_ME_7-12_10w'
+    #current_dir = r'G:\ihep5\idl_psf_location\v7_LE_2-6_ME_7-12_10w'
+    current_dir = r'G:\ihep5\idl_psf_location\v7_LE_2-6_ME_7-20_10w'
     os.chdir(current_dir)
     txtname_list,tot_num = count_dir('plottxt')
     tem_array = np.loadtxt(txtname_list[0])

@@ -33,10 +33,12 @@ if __name__ == '__main__':
     #current_dir = r'G:\ihep5\idl_psf_location\moreLE_2_6_ME_7_20_10w'
     #current_dir = r'G:\ihep5\idl_psf_location\moreLE_2_6_ME_7_20_10w'
     #current_dir = r'G:\ihep5\idl_psf_location\ME_7_20_100w'
-    current_dir = r'G:\ihep5\idl_psf_location\right_LE_2-6_ME_7-20_10w'
-    #current_dir = r'G:\ihep5\idl_psf_location\right_LE_2-6_10w'
+    current_dir = r'G:\ihep5\idl_psf_location\bf_v7\right_LE_2-6_ME_7-20_10w'
+    #current_dir = r'G:\ihep5\idl_psf_location\bf_v7\right_LE_2-6_10w'
     #current_dir = r'G:\ihep5\idl_psf_location\right_LE_2-6_ME_7-20_10w_24b100w'
-    #current_dir = r'G:\ihep5\idl_psf_location\right_LE_2-6_ME_7-12_10w'
+    #current_dir = r'G:\ihep5\idl_psf_location\v7_LE_2-6_ME_7-12_10w'
+    #current_dir = r'G:\ihep5\idl_psf_location\v7_LE_2-6_ME_7-20_10w'
+   # current_dir = r'G:\ihep5\idl_psf_location\bf_v7\right_LE_2-6_ME_7-12_10w'
     os.chdir(current_dir)
     #txtname = 'plotall_10w_LE_2-6_ME_7-20.txt'
     #txtname = 'plotall_LE_2-6_ME_7-20.txt'
@@ -179,7 +181,7 @@ if __name__ == '__main__':
     ax.xaxis.set_major_locator(MultipleLocator(1.0))
     ax.yaxis.set_major_locator(MultipleLocator(0.5))
     ax.legend(loc='upper right',prop={'size':16},framealpha=1)
-    ax.tick_params(axis='both', which='major', bottom='on', top='off', left='on', right='off', labelsize=14, width=1,
+    ax.tick_params(axis='both', which='major', bottom=True, top=False, left=True, right=False, labelsize=14, width=1,
                    length=10)
     ax.set_xlabel('RA (deg)', fontsize=16)  # 28
     ax.set_ylabel('DEC (deg)', fontsize=16)
