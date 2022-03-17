@@ -134,24 +134,30 @@ def plot_delta(data_x,data_y,data_z,instru='ME'):
     beta = np.arange(-b_bound, b_bound, 0.01)
     alpha, beta = np.meshgrid(alpha, beta)
     Z0 = stand_psfmodel(alpha, beta,data_x,data_y,data_z)
-    Z1 = get_psf(alpha, beta,data_x,data_y,data_z)
+    Z1 = nurbs_psf_module(alpha, beta, data_x, data_y, data_z)
     cmap = cm.coolwarm
     surf = ax.contourf(alpha, beta, Z0 - Z1, cmap=cmap)  # , rstride=1, cstride=1, cmap=cm.coolwarm,
     # linewidth=0, antialiased=False)
     plt.colorbar(surf, orientation='horizontal')
     fig.savefig('{:s}_psf_delta.png'.format(instru))
 
+def nurbs_psf_module(alpha, beta, data_x, data_y, data_z):
+    psf = (np.sqrt(2 * get_psf(alpha, beta, data_x, data_y, data_z) + 1) - 1) + stand_psfmodel(alpha, beta, data_x,
+                                                                                         data_y, data_z)
+    return psf
+
 def plot_delta_minusstand(data_x,data_y,data_z,instru='ME'):
     fig = plt.figure(figsize=plt.figaspect(0.5))
     ax = fig.add_subplot(1, 1, 1)  # , projection='3d')
     a_bound, b_bound = get_bound(instru)
-    alpha = np.arange(-a_bound, a_bound, 0.01)
-    beta = np.arange(-b_bound, b_bound, 0.01)
+    alpha = np.arange(-a_bound, a_bound, 0.001)
+    beta = np.arange(-b_bound, b_bound, 0.001)
     alpha, beta = np.meshgrid(alpha, beta)
-    #Z0 = stand_psfmodel(alpha, beta,data_x,data_y,data_z)
-    Z1 = get_psf(alpha, beta,data_x,data_y,data_z)# + stand_psfmodel(alpha, beta,data_x,data_y,data_z)
+    Z0 = stand_psfmodel(alpha, beta,data_x,data_y,data_z)
+    Z1 = nurbs_psf_module(alpha, beta, data_x, data_y, data_z)
+    # Z1 = np.exp(get_psf(alpha, beta,data_x,data_y,data_z))*stand_psfmodel(alpha, beta,data_x,data_y,data_z)
     cmap = cm.coolwarm
-    surf = ax.contourf(alpha, beta, Z1, cmap=cmap)  # , rstride=1, cstride=1, cmap=cm.coolwarm,
+    surf = ax.contourf(alpha, beta, Z0 - Z1, cmap=cmap)  # , rstride=1, cstride=1, cmap=cm.coolwarm,
     # linewidth=0, antialiased=False)
     plt.colorbar(surf, orientation='horizontal')
     fig.savefig('{:s}_psf_delta.png'.format(instru))
@@ -160,10 +166,13 @@ def plot_psf_minustand(func, funcname,data_x,data_y,data_z,instru='ME'):
     fig = plt.figure(figsize=plt.figaspect(0.5))
     ax = fig.add_subplot(1, 1, 1)  # , projection='3d')
     a_bound,b_bound = get_bound(instru)
-    alpha = np.arange(-a_bound, a_bound, 0.01)
-    beta = np.arange(-b_bound, b_bound, 0.01)
+    alpha = np.arange(-a_bound, a_bound, 0.001)
+    beta = np.arange(-b_bound, b_bound, 0.001)
     alpha, beta = np.meshgrid(alpha, beta)
-    Z0 = func(alpha, beta,data_x,data_y,data_z) + stand_psfmodel(alpha, beta,data_x,data_y,data_z)
+    Z0 = func(alpha, beta,data_x,data_y,data_z)
+    #Z0 = (np.sqrt(2 * get_psf(alpha, beta, data_x, data_y, data_z) + 1) - 1) + stand_psfmodel(alpha, beta, data_x,
+    #                                                                                     data_y, data_z)
+    #Z0 = (func(alpha, beta,data_x,data_y,data_z) * stand_psfmodel(alpha, beta,data_x,data_y,data_z))+stand_psfmodel(alpha, beta,data_x,data_y,data_z)
     # Z1 = correct_psfmodel(alpha,beta)
     cmap = cm.coolwarm
     surf = ax.contourf(alpha, beta, Z0, cmap=cmap)  # , rstride=1, cstride=1, cmap=cm.coolwarm,
@@ -181,5 +190,5 @@ plot_psf(stand_psfmodel, 'stand',data_x,data_y,data_z)
 # correct_psf = plot_psf(get_psf, 'correct',data_x,data_y,data_z)
 # plot_delta(data_x,data_y,data_z,'ME')
 
-correct_psf = plot_psf_minustand(get_psf, 'correct',data_x,data_y,data_z)
-plot_delta_minusstand(data_x,data_y,data_z,'ME')
+correct_psf = plot_psf(nurbs_psf_module, 'correct',data_x,data_y,data_z)
+plot_delta(data_x,data_y,data_z,'ME')
