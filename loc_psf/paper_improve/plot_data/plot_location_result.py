@@ -38,7 +38,10 @@ if __name__ == '__main__':
     #current_dir = r'G:\ihep5\idl_psf_location\right_LE_2-6_ME_7-20_10w_24b100w'
     #current_dir = r'G:\ihep5\idl_psf_location\v7_LE_2-6_ME_7-12_10w'
     #current_dir = r'G:\ihep5\idl_psf_location\v7_LE_2-6_ME_7-20_10w'
-   # current_dir = r'G:\ihep5\idl_psf_location\bf_v7\right_LE_2-6_ME_7-12_10w'
+    #current_dir = r'G:\ihep5\idl_psf_location\bf_v7\right_LE_2-6_ME_7-12_10w'
+    #current_dir = r'G:\ihep5\idl_psf_locnew\LE_2-6_ME_7-20_10w'
+    #current_dir = r'G:\ihep5\idl_psf_locnew\LE_2-6_ME_7-12_10w'
+    current_dir = r'G:\ihep5\idl_psf_locnew\LE_2-6_ME_7-40_10w'
     os.chdir(current_dir)
     #txtname = 'plotall_10w_LE_2-6_ME_7-20.txt'
     #txtname = 'plotall_LE_2-6_ME_7-20.txt'
@@ -80,7 +83,7 @@ if __name__ == '__main__':
 
     #================首先筛除误差过大的=============
     ###dex = (x_err<0.2) & (y_err<0.6) & (x>261.5) & (x<265.0) & (y>-35.0) & (y<-32.0)
-    dex = (x_err < 0.23) & (y_err < 0.6) & (x > 261.5) & (x < 265.0) & (y > -35.0) & (y < -32.0)
+    dex = (x_err < 0.23) & (y_err < 0.18) & (x > 261.5) & (x < 265.0) & (y > -35.0) & (y < -32.0)
     x = x[dex]
     x_err = x_err[dex]
     y = y[dex]
@@ -109,7 +112,7 @@ if __name__ == '__main__':
     del_ang,d = cal_dis_meters(90 - G354_dec, G354_ra, 90 - yG354, xG354)
     print('G354对应序号偏离：', del_ang)
     # ================再筛除误差过大的=============
-    dex = (x_err < 0.6) & (y_err < 0.6) & ((x > H1730_ra - x_H1730_devia) | (y >H1730_dec - y_H1730_devia))
+    dex = (x_err < 0.23) & (y_err < 0.23) & ((x > H1730_ra - x_H1730_devia) | (y >H1730_dec - y_H1730_devia))
     x = x[dex]
     x_err = x_err[dex]
     y = y[dex]

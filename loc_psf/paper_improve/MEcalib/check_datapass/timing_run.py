@@ -246,7 +246,7 @@ def merun_v2(path, Wpath, ObsID,Erange):
 	regti_v2.regti(meevtfile, Wpath, ObsID)###calc total time
 	print ObsID, " : r-gti end"
 
-	if not os.path.exists(Wbaddetfile):
+	if 1:#not os.path.exists(Wbaddetfile):
 		mescreen_newbd.mescreen_newbd('%s' % Wpath,'%s' % ObsID, program_tree)###
 		print ObsID, " : bd end"
 

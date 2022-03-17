@@ -282,7 +282,8 @@ for select_box_dex in range(3):
     t = t[mask]
     cts = cts[mask]
     err = err[mask]
-    plot_origindata(norm=cts, yerr=err, x_values=t, alpha=accept_alpha, beta=accept_beta, instru=instr)
+    x_values = np.arange(len(cts))
+    plot_origindata(norm=cts, yerr=err, x_values=x_values, alpha=accept_alpha, beta=accept_beta, instru=instr)
 
 
 # att_list = [infile]
