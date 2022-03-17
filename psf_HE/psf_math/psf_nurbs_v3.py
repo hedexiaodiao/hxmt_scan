@@ -115,8 +115,11 @@ def plot_psf(func, funcname,data_x,data_y,data_z,instru='ME'):
     alpha, beta = np.meshgrid(alpha, beta)
     Z0 = func(alpha, beta,data_x,data_y,data_z)
     # Z1 = correct_psfmodel(alpha,beta)
-    cmap = cm.coolwarm
-    surf = ax.contourf(alpha, beta, Z0, cmap=cmap)  # , rstride=1, cstride=1, cmap=cm.coolwarm,
+    cmap = cm.YlOrRd
+    ###cmap = cm.autumn
+    ###cmap = cm.coolwarm
+    levs = np.linspace(0.01, 1, 20)
+    surf = ax.contourf(alpha, beta, Z0, levs,cmap=cmap)  # , rstride=1, cstride=1, cmap=cm.coolwarm,
     # linewidth=0, antialiased=False)
     plt.colorbar(surf, orientation='horizontal')
     fig.savefig('{:s}_{:s}_psf.png'.format(instru, funcname))
@@ -135,8 +138,11 @@ def plot_delta(data_x,data_y,data_z,instru='ME'):
     alpha, beta = np.meshgrid(alpha, beta)
     Z0 = stand_psfmodel(alpha, beta,data_x,data_y,data_z)
     Z1 = nurbs_psf_module(alpha, beta, data_x, data_y, data_z)
-    cmap = cm.coolwarm
-    surf = ax.contourf(alpha, beta, Z0 - Z1, cmap=cmap)  # , rstride=1, cstride=1, cmap=cm.coolwarm,
+    cmap = cm.YlOrRd
+    ###cmap = cm.autumn
+    ###cmap = cm.coolwarm
+    levs = np.linspace(np.min(Z0-Z1), np.max(Z0-Z1), 20)
+    surf = ax.contourf(alpha, beta, Z0 - Z1,levs, cmap=cmap)  # , rstride=1, cstride=1, cmap=cm.coolwarm,
     # linewidth=0, antialiased=False)
     plt.colorbar(surf, orientation='horizontal')
     fig.savefig('{:s}_psf_delta.png'.format(instru))

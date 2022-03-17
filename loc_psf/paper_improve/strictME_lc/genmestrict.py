@@ -17,21 +17,22 @@ def mkdir_try(dirname):
 
 if len(sys.argv)>=3:
     energy_str = sys.argv[2]
+    cut_value = sys.argv[3]
     if energy_str=='7_12':
         print('use energy 7-12 keV')
         minpi = 68  ###energy =7 keV
         maxpi = 154 ###energy = 12 keV
-        outpath = '/sharefs/hbkg/user/luoqi/psfl/genlc_strictME/7_12/'
+        outpath = '/sharefs/hbkg/user/luoqi/psfl/genlc_strictME/7_12_%s/'%str(cut_value)
     elif energy_str=='7_20':
         print('use energy 7-20 keV')
         minpi = 68  ###energy =7 keV
         maxpi = 290  ###energy = 20 keV
-        outpath = '/sharefs/hbkg/user/luoqi/psfl/genlc_strictME/7_20/'
+        outpath = '/sharefs/hbkg/user/luoqi/psfl/genlc_strictME/7_20_%s/'%str(cut_value)
     elif energy_str=='7_40':
         print('use energy 7-40 keV')
         minpi = 68
         maxpi = 631
-        outpath = '/sharefs/hbkg/user/luoqi/psfl/genlc_strictME/7_40/'
+        outpath = '/sharefs/hbkg/user/luoqi/psfl/genlc_strictME/7_40_%s/'%str(cut_value)
     else:
         print('wrong input!')
 else:
@@ -41,7 +42,7 @@ else:
     outpath = '/sharefs/hbkg/user/luoqi/psfl/genlc/7_12/'
 
 obsid = sys.argv[1]
-cut_value = sys.argv[3]
+
 pfile = "/sharefs/hbkg/user/luoqi/HXMT_SCAN/loc_psf/pfiles/me%s"%str(obsid)
 os.system('mkdir %s'%pfile);os.system("rm %s/*"%pfile);
 pfilepath = "%s;/home/hxmt/hxmtsoft2/hxmtsoftv2.02/install/x86_64-pc-linux-gnu-libc2.12/syspfiles"%pfile
@@ -161,7 +162,7 @@ thd.close();del thd
 #float('l')
 cmd = '; melcgen evtfile=%s deadfile=%s outfile=%s userdetid="0-7,11-17;18-25,29-35;36-43,47-53" starttime=%s stoptime=%s minPI=%s maxPI=%s binsize=1 deadcorr=yes'%(screenfile,deadfile,lcfile,startm,stoptm,minpi,maxpi)
 cmd += ' ; ls -t %s_g0*.lc | head -1 >  %s'%(lcfile,lcnametxt)
-cmd += ' ; python mebkgmap_2012005_lc_err.py lc %s %s %s %s %s %s %s %s %s %s'%(screenfile,basefile['EHK'],newgtifile,deadfile,basefile['TH'],lcnametxt,minpi,maxpi,bkgfile,newbdfile)
+cmd += ' ; python mebkgmap_2012005_lc_err.py lc %s %s %s %s %s %s %s %s %s %s'%(screenfile,basefile['EHK'],newgtifile,deadfile,basefile['TH'],lcnametxt,minpi,maxpi,bkgfile,new_strictbdfile)
 print(cmd)
 os.system(cmdinit + cmd)
 
@@ -169,12 +170,13 @@ burst_ra = 263.353
 burst_dec = -33.389
 speccmd = '; mespecgen evtfile=%s deadfile=%s outfile=%s userdetid="0-7,11-17;18-25,29-35;36-43,47-53" starttime=%s stoptime=%s minPI=%s maxPI=%s'%(screenfile,deadfile,specfile,startm,stoptm,minpi,maxpi)
 speccmd += ' ; ls -t %s_g0*.pha | head -1 >  %s'%(specfile,specnametxt)
-speccmd += ' ; python mebkgmap_2012005_lc_err.py spec %s %s %s %s %s %s %s %s %s %s'%(screenfile,basefile['EHK'],newgtifile,deadfile,basefile['TH'],specnametxt,minpi,maxpi,specbkgfile,newbdfile)
+speccmd += ' ; python mebkgmap_2012005_lc_err.py spec %s %s %s %s %s %s %s %s %s %s'%(screenfile,basefile['EHK'],newgtifile,deadfile,basefile['TH'],specnametxt,minpi,maxpi,specbkgfile,new_strictbdfile)
 speccmd += ' ; merspgen phafile=%s_g0_0-17.pha outfile=%s attfile=%s ra=%s dec=%s'%(specfile,rspfile,crtattfile,burst_ra,burst_dec)
 print(speccmd)
 os.system(cmdinit + speccmd)
 
-sfile=pf.open("%s"%newbdfile)
+###sfile=pf.open("%s"%newbdfile)
+sfile=pf.open("%s"%new_strictbdfile)
 bdnum=sfile[1].data.field(0)
 bdbox0 = np.in1d(range(256)+range(352,576),bdnum).sum()
 bdbox1 = np.in1d(range(576,832)+range(928,1152),bdnum).sum()
