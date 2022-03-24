@@ -28,7 +28,7 @@ basedatapath = '/hxmt/work/HXMT-DATA/1L/'+"A%s/%s/%s/"%(obsid[1:3],obsid[:8],obs
 datapath = glob.glob(basedatapath+obsid+'-*')[0]
 basefile = get_rawdata(datapath, instrument="ME")
 
-outpath = '/sharefs/hbkg/data/SCAN/luoqi/ME_data/'
+outpath = '/sharefs/hbkg/data/SCAN/locME/'
 pipath = outpath + 'pi'
 grdpath = outpath + 'grd'
 gtipath = outpath + 'gti'
@@ -73,6 +73,9 @@ newbdfile = outpath + 'gti/mebadall.fits'
 
 if not os.path.exists(screenfile):
     cmd +=' ;mescreen evtfile=%s gtifile=%s outfile=%s baddetfile=%s userdetid="0-53"'%(grdfile,gtifile,screenfile,newbdfile)
+    mescreencmd = 'mescreen evtfile=%s gtifile=%s outfile=%s baddetfile=%s userdetid="0-53"'%(grdfile,gtifile,screenfile,newbdfile)
+    with open('mescreen_munual.sh', 'a+') as f:
+        print >> f, mescreencmd
 
 os.system(cmdinit + cmd)
 #plt.switch_backend('tkagg')

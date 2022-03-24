@@ -4,6 +4,7 @@ import os
 import glob
 from astropy.io import fits as pf
 from tool import *
+from scipy import interpolate
 def mkdir_try(dirname):
     if os.path.exists(dirname) == 0:
         try:
@@ -17,7 +18,7 @@ os.system('mkdir %s'%pfile);os.system("rm %s/*"%pfile);
 pfilepath = "%s;/home/hxmt/hxmtsoft2/hxmtsoftv2.02/install/x86_64-pc-linux-gnu-libc2.12/syspfiles"%pfile
 cmdinit = 'sleep 1;source /sharefs/hbkg/user/nangyi/hxmtsoft_v2.02.sh ;export PFILES="%s"'%(pfilepath)
 minpi = 226
-minpi =106
+###minpi =106
 #maxpi = 373
 #minpi = 374
 maxpi = 710
@@ -26,7 +27,7 @@ basedatapath = '/hxmt/work/HXMT-DATA/1L/'+"A%s/%s/%s/"%(obsid[1:3],obsid[:8],obs
 datapath = glob.glob(basedatapath+obsid+'-*')[0]
 basefile = get_rawdata(datapath, instrument="LE")
 
-outpath = '/sharefs/hbkg/data/SCAN/luoqi/LE_data/'
+outpath = '/sharefs/hbkg/data/SCAN/luoqi/CrabLoc_LE/'
 pipath = outpath + 'pi'
 grdpath = outpath + 'grd'
 gtipath = outpath + 'gti'
@@ -84,7 +85,8 @@ cmd += ' ; ls -t %s_g0*.lc | head -1 >  %s'%(lcfile,lcnametxt)
 cmd += ' ; python lebkgmap_202005_box0.py lc %s %s %s %s %s %s_box0'%(screenfile,newgtifile,lcnametxt,minpi,maxpi,bkgfile)
 cmd += ' ; python lebkgmap_202005_box1.py lc %s %s %s %s %s %s_box1'%(screenfile,newgtifile,lcnametxt,minpi,maxpi,bkgfile)
 cmd += ' ; python lebkgmap_202005_box2.py lc %s %s %s %s %s %s_box2'%(screenfile,newgtifile,lcnametxt,minpi,maxpi,bkgfile)
-os.system(cmdinit + cmd)
+if not os.path.exists('%s_box0.lc'%bkgfile):
+    os.system(cmdinit + cmd)
 '''
 ljygti = glob.glob('/sharefs/hbkg/user/liaojy/HXMT_BKG_LE/Data_filter_Auto/%s*/%s*_LE_GTI_Auto.txt'%(obsid,obsid))[0]
 ljygti = np.loadtxt(ljygti)
@@ -99,8 +101,15 @@ yp = (hd1[1].data['FRACEXP']==1.)#&(np.in1d(orgtm,ljytm)))
 tm = hd1[1].data['TIME'][yp]
 ct = hd1[1].data['COUNTS'][yp]
 cter = hd1[1].data['ERROR'][yp]
-bkgct = hd2[1].data['RATE'][yp]
-bkger = hd2[1].data['Error'][yp]
+bkgtm_bf = hd2[1].data['TIME']
+bkgct_bf = hd2[1].data['RATE']
+bkger_bf = hd2[1].data['Error']
+bkgtm = tm
+bkgct_f = interpolate.interp1d(bkgtm_bf,bkgct_bf,kind='linear')
+bkger_f = interpolate.interp1d(bkgtm_bf,bkger_bf,kind='linear')
+bkgct = bkgct_f(bkgtm)
+bkger = bkger_f(bkgtm)
+
 netct = ct-bkgct
 neter = np.sqrt(cter**2+bkger**2)
 col1 = pf.Column(name = 'Time', format='D',array = tm)
@@ -123,8 +132,17 @@ yp = (hd1[1].data['FRACEXP']==1.)#&(np.in1d(orgtm,ljytm)))
 tm = hd1[1].data['TIME'][yp]
 ct = hd1[1].data['COUNTS'][yp]
 cter = hd1[1].data['ERROR'][yp]
-bkgct = hd2[1].data['RATE'][yp]
-bkger = hd2[1].data['Error'][yp]
+# bkgct = hd2[1].data['RATE'][yp]
+# bkger = hd2[1].data['Error'][yp]
+bkgtm_bf = hd2[1].data['TIME']
+bkgct_bf = hd2[1].data['RATE']
+bkger_bf = hd2[1].data['Error']
+bkgtm = tm
+bkgct_f = interpolate.interp1d(bkgtm_bf,bkgct_bf,kind='linear')
+bkger_f = interpolate.interp1d(bkgtm_bf,bkger_bf,kind='linear')
+bkgct = bkgct_f(bkgtm)
+bkger = bkger_f(bkgtm)
+
 netct = ct-bkgct
 neter = np.sqrt(cter**2+bkger**2)
 col1 = pf.Column(name = 'Time', format='D',array = tm)
@@ -146,8 +164,17 @@ yp = (hd1[1].data['FRACEXP']==1.)#&(np.in1d(orgtm,ljytm)))
 tm = hd1[1].data['TIME'][yp]
 ct = hd1[1].data['COUNTS'][yp]
 cter = hd1[1].data['ERROR'][yp]
-bkgct = hd2[1].data['RATE'][yp]
-bkger = hd2[1].data['Error'][yp]
+# bkgct = hd2[1].data['RATE'][yp]
+# bkger = hd2[1].data['Error'][yp]
+bkgtm_bf = hd2[1].data['TIME']
+bkgct_bf = hd2[1].data['RATE']
+bkger_bf = hd2[1].data['Error']
+bkgtm = tm
+bkgct_f = interpolate.interp1d(bkgtm_bf,bkgct_bf,kind='linear')
+bkger_f = interpolate.interp1d(bkgtm_bf,bkger_bf,kind='linear')
+bkgct = bkgct_f(bkgtm)
+bkger = bkger_f(bkgtm)
+
 netct = ct-bkgct
 neter = np.sqrt(cter**2+bkger**2)
 col1 = pf.Column(name = 'Time', format='D',array = tm)

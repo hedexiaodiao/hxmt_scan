@@ -24,17 +24,21 @@ basedatapath = '/hxmt/work/HXMT-DATA/1L/'+"A%s/%s/%s/"%(obsid[1:3],obsid[:8],obs
 print('1L path:',basedatapath+obsid+'-*')
 datapath = glob.glob(basedatapath+obsid+'-*')[0]
 basefile = get_rawdata(datapath, instrument="HE")
-outpath = '/sharefs/hbkg/data/SCAN/luoqi/HE_data/'
+outpath = '/sharefs/hbkg/data/SCAN/luoqi/CrabLoc_HE/'
 pipath = outpath + 'pi'
 grdpath = outpath + 'grd'
 gtipath = outpath + 'gti'
 screenpath = outpath + 'screen'
 lcpath = outpath + 'lc'
+attpath = outpath + 'att'
+ehkpath = outpath + 'ehk'
 mkdir_try(pipath)
 mkdir_try(grdpath)
 mkdir_try(gtipath)
 mkdir_try(screenpath)
 mkdir_try(lcpath)
+mkdir_try(attpath)
+mkdir_try(ehkpath)
 
 pifile = outpath + 'pi/%shepi.fits'%obsid
 gtifile = outpath + 'gti/%shegti.fits'%obsid

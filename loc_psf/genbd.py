@@ -3,6 +3,7 @@ import os
 import numpy as np
 import glob
 path = '/sharefs/hbkg/data/SCAN/nangyi/ME_data/gti/'
+outpath = '/sharefs/hbkg/data/SCAN/locME/gti/'
 lts = glob.glob(path+'*mebd.fits')#+glob.glob('/sharefs/hbkg/user/saina/data294/P0101294/*/bd_P*.fits')
 
 badnum=set({})
@@ -15,7 +16,8 @@ for i in lts:
     hd.close();del hd
 
 
-hd=pf.open('/sharefs/hbkg/data/SCAN/nangyi/ME_data/gti/P010132800302mebd.fits')
+###hd=pf.open('/sharefs/hbkg/data/SCAN/nangyi/ME_data/gti/P010132800302mebd.fits')
+hd=pf.open('/sharefs/hbkg/data/SCAN/nangyi/ME_data/gti/P010132800803mebd.fits')
 prihdr=hd[1].header
 
 prihdu = pf.PrimaryHDU(header=prihdr)
@@ -32,6 +34,6 @@ pf.conf.extension_name_case_sensitive=True
 tbhdu.name='detectorStatu'
 tbhdu.header = prihdr
 
-tbhdu.writeto(path + "mebadall.fits",overwrite=True)
+tbhdu.writeto(outpath + "mebadall.fits",overwrite=True)
 
 
