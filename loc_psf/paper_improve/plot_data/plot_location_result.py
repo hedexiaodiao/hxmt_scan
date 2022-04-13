@@ -42,11 +42,13 @@ if __name__ == '__main__':
     #current_dir = r'G:\ihep5\idl_psf_locnew\LE_2-6_ME_7-20_10w'
     #current_dir = r'G:\ihep5\idl_psf_locnew\LE_2-6_ME_7-12_10w'
     current_dir = r'G:\ihep5\idl_psf_locnew\LE_2-6_ME_7-40_10w'
+    current_dir = r'G:\ihep5\idl_psf_locnew\plot_best_psfloc'
     os.chdir(current_dir)
     #txtname = 'plotall_10w_LE_2-6_ME_7-20.txt'
     #txtname = 'plotall_LE_2-6_ME_7-20.txt'
     #txtname = 'plotall_ME_7-20.txt'
     txtname = 'plotall.txt'
+    txtname = 'result_le_2-6_me_7-20_PSF_LE_2-6_PSF_ME_7-40_All_Burst.txt'
     # 原数据，共12个标记(点)
     H1730_ra = 263.353
     H1730_dec = -33.3888
@@ -56,14 +58,22 @@ if __name__ == '__main__':
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(1, 1, 1)
 
-    data =  np.loadtxt(txtname)#H1730_ra + np.random.uniform(low=-1.0, high=1.0, size=12)
+    # data =  np.loadtxt(txtname)#H1730_ra + np.random.uniform(low=-1.0, high=1.0, size=12)
+    # print(data.shape)
+    # x = data[:,0]
+    # x_err = data[:,1]
+    # y =  data[:,2]#H1730_dec + np.random.uniform(low=-1.0, high=1.0, size=12)
+    # y_err = data[:,3]
+    # deg_err = data[:,4]
+    # burst_num = data[:,-1]
+    data = np.loadtxt(txtname)  # H1730_ra + np.random.uniform(low=-1.0, high=1.0, size=12)
     print(data.shape)
-    x = data[:,0]
-    x_err = data[:,1]
-    y =  data[:,2]#H1730_dec + np.random.uniform(low=-1.0, high=1.0, size=12)
-    y_err = data[:,3]
-    deg_err = data[:,4]
-    burst_num = data[:,-1]
+    x = data[:, 1]
+    x_err = data[:, 2]
+    y = data[:, 3]  # H1730_dec + np.random.uniform(low=-1.0, high=1.0, size=12)
+    y_err = data[:, 4]
+    deg_err = data[:, 5]
+    burst_num = data[:, 0]
 
     ax.plot(  #
         H1730_ra, H1730_dec,  #
@@ -83,7 +93,8 @@ if __name__ == '__main__':
 
     #================首先筛除误差过大的=============
     ###dex = (x_err<0.2) & (y_err<0.6) & (x>261.5) & (x<265.0) & (y>-35.0) & (y<-32.0)
-    dex = (x_err < 0.23) & (y_err < 0.18) & (x > 261.5) & (x < 265.0) & (y > -35.0) & (y < -32.0)
+    #dex = (x_err < 0.23) & (y_err < 0.18) & (x > 261.5) & (x < 265.0) & (y > -35.0) & (y < -32.0)
+    dex = (x_err < 0.3) & (y_err < 0.3) & (x > 261.5) & (x < 265.0) & (y > -35.0) & (y < -32.0)
     x = x[dex]
     x_err = x_err[dex]
     y = y[dex]
@@ -113,6 +124,7 @@ if __name__ == '__main__':
     print('G354对应序号偏离：', del_ang)
     # ================再筛除误差过大的=============
     dex = (x_err < 0.23) & (y_err < 0.23) & ((x > H1730_ra - x_H1730_devia) | (y >H1730_dec - y_H1730_devia))
+    dex = (x_err < 0.3) & (y_err < 0.3) & ((x > H1730_ra - x_H1730_devia) | (y > H1730_dec - y_H1730_devia))
     x = x[dex]
     x_err = x_err[dex]
     y = y[dex]
