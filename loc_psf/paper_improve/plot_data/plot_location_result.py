@@ -55,8 +55,6 @@ if __name__ == '__main__':
     G354_ra = 262.991
     G354_dec = -33.834
 
-    fig = plt.figure(figsize=(8, 8))
-    ax = fig.add_subplot(1, 1, 1)
 
     # data =  np.loadtxt(txtname)#H1730_ra + np.random.uniform(low=-1.0, high=1.0, size=12)
     # print(data.shape)
@@ -75,16 +73,8 @@ if __name__ == '__main__':
     deg_err = data[:, 5]
     burst_num = data[:, 0]
 
-    ax.plot(  #
-        H1730_ra, H1730_dec,  #
-        color='red',  #
-        linestyle='', linewidth=2,  #
-        marker='D', markersize=7, markeredgecolor='red', markerfacecolor='red', label='H1730-333')
-    ax.plot(  #
-        G354_ra, G354_dec,  #
-        color='red',  #
-        linestyle='', linewidth=2,  #
-        marker='s', markersize=7, markeredgecolor='red', markerfacecolor='red', label='G354-0')
+    dex = (deg_err<=0.3) & (burst_num != 17) & (burst_num != 18)
+
 
     # print(burst_num[10])
     # ax.errorbar(x[10], y[10], yerr=y_err[10], xerr=x_err[10], color='green', linewidth=1,  #
@@ -94,7 +84,7 @@ if __name__ == '__main__':
     #================首先筛除误差过大的=============
     ###dex = (x_err<0.2) & (y_err<0.6) & (x>261.5) & (x<265.0) & (y>-35.0) & (y<-32.0)
     #dex = (x_err < 0.23) & (y_err < 0.18) & (x > 261.5) & (x < 265.0) & (y > -35.0) & (y < -32.0)
-    dex = (x_err < 0.3) & (y_err < 0.3) & (x > 261.5) & (x < 265.0) & (y > -35.0) & (y < -32.0)
+    #######dex = (x_err < 0.3) & (y_err < 0.3) & (x > 261.5) & (x < 265.0) & (y > -35.0) & (y < -32.0)
     x = x[dex]
     x_err = x_err[dex]
     y = y[dex]
@@ -123,16 +113,18 @@ if __name__ == '__main__':
     del_ang,d = cal_dis_meters(90 - G354_dec, G354_ra, 90 - yG354, xG354)
     print('G354对应序号偏离：', del_ang)
     # ================再筛除误差过大的=============
-    dex = (x_err < 0.23) & (y_err < 0.23) & ((x > H1730_ra - x_H1730_devia) | (y >H1730_dec - y_H1730_devia))
-    dex = (x_err < 0.3) & (y_err < 0.3) & ((x > H1730_ra - x_H1730_devia) | (y > H1730_dec - y_H1730_devia))
+    '''
+    ######dex = (x_err < 0.23) & (y_err < 0.23) & ((x > H1730_ra - x_H1730_devia) | (y >H1730_dec - y_H1730_devia))
+    ######dex = (x_err < 0.3) & (y_err < 0.3) #& ((x > H1730_ra - x_H1730_devia) | (y > H1730_dec - y_H1730_devia))
     x = x[dex]
     x_err = x_err[dex]
     y = y[dex]
     y_err = y_err[dex]
     deg_err = deg_err[dex]
     burst_num = burst_num[dex]
+    '''
     #==================找到合适的H1730============
-    nofar_dex = (x<(H1730_ra+0.25)) & (x>G354_ra)
+    nofar_dex = (burst_num != G354_burst)######(x<(H1730_ra+0.25)) & (x>G354_ra)
     x = x[nofar_dex]
     x_err = x_err[nofar_dex]
     y = y[nofar_dex]
@@ -176,24 +168,40 @@ if __name__ == '__main__':
     # y_lim_right = y_max + y_diff_right  # 顶部往上挪
 
     # ====== 原图 ======
+    fig = plt.figure(figsize=(8, 8))
+    ax = fig.add_subplot(1, 1, 1)
 
+    ax.plot(  #
+        H1730_ra, H1730_dec,  #
+        color='red',  #
+        linestyle='', linewidth=2,  #
+        marker='D', markersize=7, markeredgecolor='red', markerfacecolor='red', label='H1730-333',zorder=2)
 
     ax.errorbar(x, y, yerr=y_err,xerr=x_err, color='black', linewidth=1,  #
                 linestyle='',
-            marker='o', markersize=3, markeredgecolor='black', markerfacecolor='black')
+            marker='o', markersize=3, markeredgecolor='black', markerfacecolor='black',zorder=1)
+
+
 
     ax.errorbar(xG354, yG354, yerr=y_errG354, xerr=x_errG354, color='blue', linewidth=1,  #
                 linestyle='',
-                marker='o', markersize=3, markeredgecolor='blue', markerfacecolor='blue')
+                marker='o', markersize=3, markeredgecolor='blue', markerfacecolor='blue',zorder=2)
+
+    ax.plot(  #
+        G354_ra, G354_dec,  #
+        color='red',  #
+        linestyle='', linewidth=2,  #
+        marker='s', markersize=7, markeredgecolor='red', markerfacecolor='red', label='G354-0',zorder=1)
+
 
     # rect = mpathes.Rectangle(xy_down_left, width=abound*2, height=bbound*2, fill=False,angle=roll, color='r')
     # ax.add_patch(rect)
 
     #fig, ax = plt.subplots(1, 1, 1, figsize=(6, 4))
     #ax.set_title(r"ax1")
-    ax.set_xlim(H1730_ra-2, H1730_ra+2)  # 子图窗口大小固定了，调整子坐标系的显示范围
-    ax.set_ylim(H1730_dec-2, H1730_dec+2)
-    ax.xaxis.set_major_locator(MultipleLocator(1.0))
+    ax.set_xlim(H1730_ra-1.0, H1730_ra+1.0)  # 子图窗口大小固定了，调整子坐标系的显示范围
+    ax.set_ylim(H1730_dec-1.0, H1730_dec+1.0)
+    ax.xaxis.set_major_locator(MultipleLocator(0.5))
     ax.yaxis.set_major_locator(MultipleLocator(0.5))
     ax.legend(loc='upper right',prop={'size':16},framealpha=1)
     ax.tick_params(axis='both', which='major', bottom=True, top=False, left=True, right=False, labelsize=14, width=1,
