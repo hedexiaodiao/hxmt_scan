@@ -4,8 +4,15 @@ import os
 import glob
 from astropy.io import fits as pf
 from tool import *
+def mkdir_try(dirname):
+    if os.path.exists(dirname) == 0:
+        try:
+            os.makedirs(dirname)
+        except OSError:
+            print('Wrong with make dir:\n'+dirname)
+
 obsid = sys.argv[1]
-pfile = "/home/hxmt/nangyi/pfiles/le%s"%str(obsid)
+pfile = "/sharefs/hbkg/user/luoqi/HXMT_SCAN/loc_psf/pfiles/he%s"%str(obsid)
 os.system('mkdir %s'%pfile);os.system("rm %s/*"%pfile);
 pfilepath = "%s;/home/hxmt/hxmtsoft2/hxmtsoftv2.02/install/x86_64-pc-linux-gnu-libc2.12/syspfiles"%pfile
 cmdinit = 'sleep 1;source /sharefs/hbkg/user/nangyi/hxmtsoft_v2.02.sh ;export PFILES="%s"'%(pfilepath)
@@ -15,7 +22,18 @@ basedatapath = '/hxmt/work/HXMT-DATA/1L/'+"A%s/%s/%s/"%(obsid[1:3],obsid[:8],obs
 datapath = glob.glob(basedatapath+obsid+'-*')[0]
 basefile = get_rawdata(datapath, instrument="LE")
 
-outpath = '/sharefs/hbkg/data/SCAN/nangyi/LE_data/'
+outpath = '/sharefs/hbkg/data/SCAN/luoqi/Crabv1_LE/'
+pipath = outpath + 'pi'
+grdpath = outpath + 'grd'
+gtipath = outpath + 'gti'
+screenpath = outpath + 'screen'
+lcpath = outpath + 'lc'
+mkdir_try(pipath)
+mkdir_try(grdpath)
+mkdir_try(gtipath)
+mkdir_try(screenpath)
+mkdir_try(lcpath)
+
 pifile = outpath + 'pi/%slepi.fits'%obsid
 grdfile = outpath + 'grd/%slegrd.fits'%obsid
 gtifile = outpath + 'gti/%slegti.fits'%obsid

@@ -7,8 +7,15 @@ from astropy.io import fits as pf
 #bdfile = '/home/hxmt/hxmtsoft2/hxmtsoftv2.02/install/x86_64-pc-linux-gnu-libc2.12/refdata/medetectorstatus.fits'
 from tool import *
 
+def mkdir_try(dirname):
+    if os.path.exists(dirname) == 0:
+        try:
+            os.makedirs(dirname)
+        except OSError:
+            print('Wrong with make dir:\n'+dirname)
+
 obsid = sys.argv[1]
-pfile = "/home/hxmt/nangyi/pfiles/me%s"%str(obsid)
+pfile = "/sharefs/hbkg/user/luoqi/HXMT_SCAN/loc_psf/pfiles/me%s"%str(obsid)
 os.system('mkdir %s'%pfile);os.system("rm %s/*"%pfile);
 pfilepath = "%s;/home/hxmt/hxmtsoft2/hxmtsoftv2.02/install/x86_64-pc-linux-gnu-libc2.12/syspfiles"%pfile
 cmdinit = 'sleep 1;source /sharefs/hbkg/user/nangyi/hxmtsoft_v2.02.sh ;export PFILES="%s" '%(pfilepath)
@@ -21,7 +28,20 @@ basedatapath = '/hxmt/work/HXMT-DATA/1L/'+"A%s/%s/%s/"%(obsid[1:3],obsid[:8],obs
 datapath = glob.glob(basedatapath+obsid+'-*')[0]
 basefile = get_rawdata(datapath, instrument="ME")
 
-outpath = '/sharefs/hbkg/data/SCAN/nangyi/ME_data/'
+outpath = '/sharefs/hbkg/data/SCAN/locv1/'
+pipath = outpath + 'pi'
+grdpath = outpath + 'grd'
+gtipath = outpath + 'gti'
+screenpath = outpath + 'screen'
+lcpath = outpath + 'lc'
+attpath = outpath +'att'
+mkdir_try(pipath)
+mkdir_try(grdpath)
+mkdir_try(gtipath)
+mkdir_try(screenpath)
+mkdir_try(lcpath)
+mkdir_try(attpath)
+
 pifile = outpath + 'pi/%smepi.fits'%obsid
 grdfile = outpath + 'grd/%smegrd.fits'%obsid
 deadfile = outpath + 'grd/%smedead.fits'%obsid

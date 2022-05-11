@@ -14,7 +14,7 @@ def mkdir_try(dirname):
             print('Wrong with make dir:\n'+dirname)
 
 obsid = sys.argv[1]
-pfile = "/sharefs/hbkg/user/luoqi/HXMT_SCAN/loc_psf/pfiles/he%s"%str(obsid)
+pfile = "/sharefs/hbkg/user/luoqi/HXMT_SCAN/loc_psf/pfilesv2/he%s"%str(obsid)
 os.system('mkdir %s'%pfile);os.system("rm %s/*"%pfile);
 pfilepath = "%s;/home/hxmt/hxmtsoft2/hxmtsoftv2.02/install/x86_64-pc-linux-gnu-libc2.12/syspfiles"%pfile
 cmdinit = 'sleep 1;source /sharefs/hbkg/user/nangyi/hxmtsoft_v2.02.sh ;export PFILES="%s" '%(pfilepath)
@@ -22,7 +22,7 @@ cmdinit = 'sleep 1;source /sharefs/hbkg/user/nangyi/hxmtsoft_v2.02.sh ;export PF
 basedatapath = '/hxmt/work/HXMT-DATA/1L/'+"A%s/%s/%s/"%(obsid[1:3],obsid[:8],obsid[:11])
 datapath = glob.glob(basedatapath+obsid+'-*')[0]
 basefile = get_rawdata(datapath, instrument="HE")
-outpath = '/sharefs/hbkg/data/SCAN/luoqi/Crabv1_HE/'
+outpath = '/sharefs/hbkg/data/SCAN/luoqi/Crabv0_HE/'
 pipath = outpath + 'pi'
 grdpath = outpath + 'grd'
 gtipath = outpath + 'gti'
@@ -72,8 +72,12 @@ thd.close();del thd
 
 #minpi = [22,23,22,23,22,22,23,22,22,22,22,22,22,22,22,22,23,22]
 #maxpi =[80,85,81,85,83,83,84,82,82,83,82,82,82,82,80,82,83,82]
-minpi = [23]*18
-maxpi =[82]*18
+###minpi = [22, 23, 22, 23, 22, 22, 23, 22, 22, 22, 22, 22, 22, 22, 22, 22, 23, 22]
+###maxpi = [80, 85, 81, 85, 83, 84, 87, 82, 82, 83, 82, 82, 82, 81, 80, 82, 83, 82]
+minpi = [22,23,22,23,22,22,23,22,22,22,22,22,22,22,22,22,23,22]
+maxpi = [80,85,81,85,83,83,84,82,82,83,82,82,82,82,80,82,83,82]
+###minpi = [23]*18
+###maxpi =[82]*18
 cout,bkg = [],[]
 cmd=';pwd'
 for i in range(18):
