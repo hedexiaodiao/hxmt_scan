@@ -28,9 +28,9 @@ if __name__ == '__main__':
     # y =  dec + np.random.uniform(low=-1.0, high=1.0, size=12)
     data_array = np.transpose(np.loadtxt('result_nangyi_b_5sig_for_Paper.txt'))
     exposure = data_array[0]
-    static_err = data_array[3]
-    sys_err = data_array[6]
-    sys_bias = data_array[5]
+    static_err = data_array[1]
+    sys_err = data_array[3]
+    sys_bias = data_array[2]
     # dex = (x_err < 0.03) & (y_err < 0.03)
     # x = x[dex]
     # x_err = x_err[dex]
@@ -86,4 +86,5 @@ if __name__ == '__main__':
     ax.spines['right'].set_linewidth('1.2')
 
 
+    plt.savefig('pointcraberror.pdf', bbox_inches='tight', dpi=fig.dpi)
     plt.show()

@@ -175,7 +175,7 @@ if __name__ == '__main__':
         H1730_ra, H1730_dec,  #
         color='red',  #
         linestyle='', linewidth=2,  #
-        marker='D', markersize=7, markeredgecolor='red', markerfacecolor='red', label='H1730-333',zorder=2)
+        marker='D', markersize=7, markeredgecolor='red', markerfacecolor='red', label='H 1730-333',zorder=2)
 
     ax.errorbar(x, y, yerr=y_err,xerr=x_err, color='black', linewidth=1,  #
                 linestyle='',
@@ -191,7 +191,7 @@ if __name__ == '__main__':
         G354_ra, G354_dec,  #
         color='red',  #
         linestyle='', linewidth=2,  #
-        marker='s', markersize=7, markeredgecolor='red', markerfacecolor='red', label='G354-0',zorder=1)
+        marker='s', markersize=7, markeredgecolor='red', markerfacecolor='red', label='GX 354-0',zorder=1)
 
 
     # rect = mpathes.Rectangle(xy_down_left, width=abound*2, height=bbound*2, fill=False,angle=roll, color='r')

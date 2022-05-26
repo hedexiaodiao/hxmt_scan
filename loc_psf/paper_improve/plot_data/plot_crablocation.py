@@ -285,4 +285,5 @@ if __name__ == '__main__':
     axins.add_patch(line_1)
     axins.add_patch(line_2)
 
+    plt.savefig('Crab1024s.pdf', bbox_inches='tight', dpi=fig.dpi)
     plt.show()
