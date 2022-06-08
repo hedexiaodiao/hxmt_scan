@@ -37,6 +37,10 @@ if __name__ == '__main__':
     # y = y[dex]
     # y_err = y_err[dex]
 
+    exposure = exposure[0:11]
+    static_err = static_err[0:11]
+    sys_err = sys_err[0:11]
+    sys_bias = sys_bias[0:11]
 
 
     # 小图扩展系数

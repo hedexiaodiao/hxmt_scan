@@ -148,10 +148,10 @@ if __name__ == '__main__':
         abound, bbound = get_abbound(instr)
         if instr != "HE":
             if instr == 'ME':
-                color = 'b'
+                color = 'g'
                 labelname = instr #+ r' 1$^\circ$.0 $\times$ 4$^\circ$.0'
             else:
-                color = 'g'
+                color = 'b'
                 labelname = instr #+ r' 1$^\circ$.6 $\times$ 6$^\circ$.0'
             for roll in roll_list:
                 ifshow = roll == 0

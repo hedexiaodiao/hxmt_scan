@@ -140,7 +140,9 @@ if __name__ == '__main__':
     print(x[0],y[0])
     del_ang, d = cal_dis_meters(90 - H1730_dec, H1730_ra, 90 - y, x)
     print('H1730对应序号偏离：', del_ang)
-    print('H1730对应序号平均偏离：', np.mean(del_ang))
+    print('H1730对应序号偏离的平均：', np.mean(del_ang))
+    meanposi_del_ang, meanposi_d = cal_dis_meters(90 - H1730_dec, H1730_ra, 90 - np.mean(y), np.mean(x))
+    print('H1730对应序号平均位置的偏离：',meanposi_del_ang)
     del_ang, d = cal_dis_meters(90 - H1730_dec, H1730_ra, 90 - G354_dec, G354_ra)
     print('H1730与G354距离：', del_ang)
 
@@ -174,24 +176,24 @@ if __name__ == '__main__':
     ax.plot(  #
         H1730_ra, H1730_dec,  #
         color='red',  #
-        linestyle='', linewidth=2,  #
-        marker='D', markersize=7, markeredgecolor='red', markerfacecolor='red', label='H 1730-333',zorder=2)
+        linestyle='', linewidth=4,  #
+        marker='D', markersize=9, markeredgecolor='red', markerfacecolor='red', label='H 1730-333',zorder=2)
 
-    ax.errorbar(x, y, yerr=y_err,xerr=x_err, color='black', linewidth=1,  #
+    ax.errorbar(x, y, yerr=y_err,xerr=x_err, color='black', linewidth=2,  #
                 linestyle='',
-            marker='o', markersize=3, markeredgecolor='black', markerfacecolor='black',zorder=1)
+            marker='o', markersize=5, markeredgecolor='black', markerfacecolor='black',zorder=1)
 
 
 
-    ax.errorbar(xG354, yG354, yerr=y_errG354, xerr=x_errG354, color='blue', linewidth=1,  #
+    ax.errorbar(xG354, yG354, yerr=y_errG354, xerr=x_errG354, color='blue', linewidth=2,  #
                 linestyle='',
-                marker='o', markersize=3, markeredgecolor='blue', markerfacecolor='blue',zorder=2)
+                marker='o', markersize=5, markeredgecolor='blue', markerfacecolor='blue',zorder=2)
 
     ax.plot(  #
         G354_ra, G354_dec,  #
         color='red',  #
-        linestyle='', linewidth=2,  #
-        marker='s', markersize=7, markeredgecolor='red', markerfacecolor='red', label='GX 354-0',zorder=1)
+        linestyle='', linewidth=4,  #
+        marker='s', markersize=9, markeredgecolor='red', markerfacecolor='red', label='GX 354-0',zorder=1)
 
 
     # rect = mpathes.Rectangle(xy_down_left, width=abound*2, height=bbound*2, fill=False,angle=roll, color='r')
@@ -203,10 +205,14 @@ if __name__ == '__main__':
     ax.set_ylim(H1730_dec-1.0, H1730_dec+1.0)
     ax.xaxis.set_major_locator(MultipleLocator(0.5))
     ax.yaxis.set_major_locator(MultipleLocator(0.5))
-    ax.legend(loc='upper right',prop={'size':16},framealpha=1)
-    ax.tick_params(axis='both', which='major', bottom=True, top=False, left=True, right=False, labelsize=14, width=1,
-                   length=10)
-    ax.set_xlabel('RA (deg)', fontsize=16)  # 28
-    ax.set_ylabel('DEC (deg)', fontsize=16)
+    ax.legend(loc='upper right',prop={'size':20},framealpha=1)
+    ax.tick_params(axis='both', which='major', bottom=True, top=False, left=True, right=False, labelsize=20, width=2,
+                   length=20)
+    ax.set_xlabel('RA (deg)', fontsize=24)  # 28
+    ax.set_ylabel('DEC (deg)', fontsize=24)
+    ax.spines['top'].set_linewidth('2.0')
+    ax.spines['bottom'].set_linewidth('2.0')
+    ax.spines['left'].set_linewidth('2.0')
+    ax.spines['right'].set_linewidth('2.0')
     plt.savefig('burst_points.pdf', bbox_inches='tight', dpi=fig.dpi)
     plt.show()
