@@ -12,15 +12,12 @@
 ```buildoutcfg
 screen -S MEscan
 source /sharefs/hbkg/user/luoqi/home/scan_MEgenlc_env.sh
-python multi_time_merun.py P0301240
+python ./ME/ME_SCAN/genlc/multi_time_merun.py P0301240
 ```
 退出：ctrl+A+D\
 重连：screen -r
 
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
 
 ## HE巡天使用说明
 ### 自动运行
@@ -28,26 +25,18 @@ python multi_time_merun.py P0301240
 ```buildoutcfg
 screen -S HEscan
 source /sharefs/hbkg/user/luoqi/home/mypython
-python HEsub_SCAN_Auto.py
+python ./HE/HXMT_GPS_Promgram/HEsub_SCAN_Auto.py
 ```
 退出：ctrl+A+D\
 重连：screen -r
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+HE巡天的具体操作方法可参考./HE/HXMT_GPS_Promgram/readme.txt
 
 ## PSF标定使用说明
 
 1.  xxxx
 2.  xxxx
 3.  xxxx
-
-## 参与开发
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
 
 
 ### 作业系统tips

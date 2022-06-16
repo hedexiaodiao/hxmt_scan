@@ -75,7 +75,8 @@ def send_mail(username, passwd, recv, title, content, mail_host='mail.ihep.ac.cn
 
 email_user = 'luoqi_ba'
 email_pwd = 'luoqi@172'
-maillist = 'luoqi@ihep.ac.cn'
+maillist = 'liaojinyuan@ihep.ac.cn'
+###maillist = 'luoqi@ihep.ac.cn'
 mail_host = 'smtp.139.com'
 
 
