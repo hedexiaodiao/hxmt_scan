@@ -142,7 +142,7 @@ def main(h=0, m=0):
 		# print("mark",mark)
 		# ldatalist=np.array(ldatalist)
 		mins = list(set(ldatalist)-set(prodlist))
-		ndatalist=np.r_[mins,lclistre]
+		ndatalist=mins###np.r_[mins,lclistre]
 		ndatalist.sort()
 		print("ndatalist",ndatalist)
 		list5=[[]]*int(1+len(ndatalist)/5)
