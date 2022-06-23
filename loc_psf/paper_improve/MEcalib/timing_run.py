@@ -35,11 +35,11 @@ def exec_cmd(cmd,my_env):
 
 ###os.system("source /hxmt/home/hxmtsoft2/hxmtsoft_v2.sh")
 def mkdir_try(dirname):
-	if os.path.exists(dirname) == 0:
-		try:
-			os.makedirs(dirname)
-		except OSError:
-			print('Wrong with make dir:\n'+dirname)
+    if os.path.exists(dirname) == 0:
+        try:
+            os.makedirs(dirname)
+        except OSError:
+            print('Wrong with make dir:\n'+dirname)
 
 def merun_v2(path, Wpath, ObsID,Erange):
 	if Erange=='7_12':
@@ -228,7 +228,7 @@ def merun_v2(path, Wpath, ObsID,Erange):
 		#if flag5!=1:
 			#os.system("cp %s %s/%s/ehk.fits"%(ehkfile,Wpath,ObsID))#######after SAA_FLAG###SUN_ANG>=10&&MOON_ANG>=5&&
 		cmd = 'megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=NONE expr="ELV>5&&COR>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"' % (
-			metempfile, Wehkfile, Wgtifile)
+		metempfile, Wehkfile, Wgtifile)
 		###cmd = 'megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=YES'%(
 		###	metempfile, Wehkfile, Wgtifile)
 		print(cmd)

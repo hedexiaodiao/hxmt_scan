@@ -18,6 +18,7 @@ import fix_eci_1N
 import check_reatt_auto
 sys.path.append("/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/lcfit")
 from write_007xml_index import *
+from exec_cmd import *
 
 ###os.system("source /hxmt/home/hxmtsoft2/hxmtsoft_v2.sh")
 def mkdir_try(dirname):
@@ -72,7 +73,9 @@ def merun_v2(path, Wpath, ObsID):
 	Ppath = '/sharefs/hbkg/user/luoqi/HXMT_SCAN/ME/ME_SCAN/pfiles_small'
 	if os.path.exists(Ppath +"/pfiles_" + ObsID):
 		os.system("rm -r %s/pfiles_%s" % (Ppath, ObsID))
+	my_env = os.environ
 	os.system("mkdir %s/pfiles_%s" % (Ppath, ObsID))
+	my_env['PFILES']="%s/pfiles_%s;/home/hxmt/hxmtsoft2/soft/install/x86_64-unknown-linux-gnu-libc2.12/syspfiles"%(Ppath, ObsID)
 	os.environ["PFILES"]="%s/pfiles_%s;/home/hxmt/hxmtsoft2/soft/install/x86_64-unknown-linux-gnu-libc2.12/syspfiles"%(Ppath, ObsID)
 	os.system("echo $PFILES")
 	######################get all the files and folders##########################################################
@@ -164,13 +167,12 @@ def merun_v2(path, Wpath, ObsID):
 			print ehkfile2
 			ehkfile = ehkfile2
 		except NameError:
-			print
-			"No ehk file, need calculate by soft"
+			print "No ehk file, need calculate by soft"
 			flag5=0
 	print "---------------------------------------------------------------------------------------"
 	###################copy files to the floders##############################################################
 	os.system("cp %s %s"%(attfile,Wattfile))
-	os.system("rm %s"%(Wgtifile))
+	###os.system("rm %s"%(Wgtifile))
 	evt_im = pf.open("%s"%(meevtfile))
 	ename = evt_im
 	ra_centre = ename[1].header['RA_PNT']
@@ -185,31 +187,44 @@ def merun_v2(path, Wpath, ObsID):
 	if 1:###not os.path.exists(Wpifile):
 		cmd = 'mepical evtfile=%s tempfile=%s outfile=%s' % (meevtfile, metempfile, Wpifile)
 		print(cmd)
-		os.system(cmd)
+		with open(program_tree + '/pi_manual.sh', 'a+') as f:
+			print>>f,cmd
+		cmd_tem = ';export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;' + cmd
+		exec_code, exec_log = exec_cmd(cmd_tem, my_env)
 		print ObsID, " : pi end"
 	if 1:###not os.path.exists(Wdeadfile):
 		cmd = 'megrade evtfile=%s outfile=%s deadfile=%s binsize=1' % (Wpifile, Wgradefile, Wdeadfile)
-		os.system(cmd)
+		print(cmd)
+		with open(program_tree + '/grade_manual.sh', 'a+') as f:
+			print>>f,cmd
+		cmd_tem = ';export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;' + cmd
+		exec_code, exec_log = exec_cmd(cmd_tem, my_env)
 		print ObsID, " : grade end"
 
 	os.system("cp %s %s" % (ehkfile, Wehkfile))
 
-	os.system('rm %s' % (Wme_gtifile))
-	if 1:###not os.path.exists(Wgtifile):###----maybe need flag5, hxmtehkgen
+	###os.system('rm %s' % (Wme_gtifile))
+	if not os.path.exists(Wgtifile):###----maybe need flag5, hxmtehkgen
 		#if flag5!=1:
 			#os.system("cp %s %s/%s/ehk.fits"%(ehkfile,Wpath,ObsID))#######after SAA_FLAG###SUN_ANG>=10&&MOON_ANG>=5&&
 		cmd = 'megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=NONE expr="ELV>5&&COR>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"' % (
 		metempfile, Wehkfile, Wgtifile)
+		###cmd = 'megtigen tempfile=%s ehkfile=%s outfile=%s defaultexpr=YES'%(
+		###	metempfile, Wehkfile, Wgtifile)
 		print(cmd)
-		os.system(cmd)
+		with open(program_tree + '/gti_manual.sh', 'a+') as f:
+			print>>f,cmd
+		cmd_tem = ';export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;' + cmd
+		exec_code, exec_log = exec_cmd(cmd_tem, my_env)
+		###os.system(cmd)
 			#os.system('hxmtehkgen orbfile=%s attfile=%s outfile=%s/%s/ehk.fits step_sec=0.25 leapfile=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/refdata/leapsec.fits rigidity=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/refdata/rigidity_20060421.fits saafile=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/SAA/SAA.fits'%(orbitfile,attfile,Wpath,ObsID))
 			#os.system('megtigen tempfile=%s ehkfile=%s/%s/ehk.fits outfile=%s/%s/ME/gtiv2.fits defaultexpr=NONE expr="ELV>5&&COR3>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"'%(metempfile,Wpath,ObsID,Wpath,ObsID))
 		#else:
 			#os.system("cp %s %s/%s/ehk.fits"%(ehkfile,Wpath,ObsID))
 			#os.system('megtigen tempfile=%s ehkfile=%s/%s/ehk.fits outfile=%s/%s/ME/gtiv2.fits defaultexpr=NONE expr="ELV>5&&COR>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"'%(metempfile,Wpath,ObsID,Wpath,ObsID))
 		print ObsID, " : o-gti & ehk end"
-		regti_v2.regti(meevtfile, Wpath, ObsID)###calc total time
-		print ObsID, " : r-gti end"
+	regti_v2.regti(meevtfile, Wpath, ObsID)###calc total time
+	print ObsID, " : r-gti end"
 
 	if not os.path.exists(Wbaddetfile):
 		mescreen_newbd.mescreen_newbd('%s' % Wpath,'%s' % ObsID)###
@@ -218,6 +233,8 @@ def merun_v2(path, Wpath, ObsID):
 	if 1:###not os.path.exists(Wscreenfile):
 		cmd = 'mescreen evtfile=%s gtifile=%s outfile=%s baddetfile=%s userdetid="0-53"' % (Wgradefile, Wme_gtifile, Wscreenfile, Wbaddetfile)
 		print(cmd)
+		with open(program_tree + '/screen_manual.sh', 'a+') as f:
+			print>>f,cmd
 		os.system(cmd)
 		print ObsID, " : screen end"
 	#os.system('mescreen evtfile=%s/%s/ME/me_grade.fits gtifile=%s/%s/ME/me_gti.fits outfile=%s/%s/ME/me_screen.fits baddetfile=${HEADAS}/refdata/medetectorstatus.fits userdetid="0-53"'%(Wpath,ObsID,Wpath,ObsID,Wpath,ObsID))
@@ -272,7 +289,9 @@ def merun_v2(path, Wpath, ObsID):
 		print>>f,ObsID
 	with open(program_tree + '/gps_mission/lcfit_misson.sh', 'a+') as f:
 		print>>f,lcfit_command
-	os.system(lcfit_command)
+	cmd_tem = ';export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;' + lcfit_command
+	exec_code, exec_log = exec_cmd(cmd_tem, my_env)
+	print('exec_code, exec_log:', exec_code, exec_log)
 
 
 
