@@ -213,7 +213,7 @@ def read_scr(Wpath, ObsID, scrtype):
 	dettb=[dettb0,dettb1,dettb2]
 	return detidor, pior, startt, stopt, tstime, gtime, dett0, dettb
 
-def mescreen_newbd(Wpath, ObsID):
+def mescreen_newbd(Wpath, ObsID, program_tree):
 	OrgWpath = Wpath + '/Org'  ###
 	Org_obspath = "%s/%s" % (OrgWpath, ObsID)  ###
 	Org_gtipath = "%s/%s" % (OrgWpath, 'GTI')  ###
@@ -286,7 +286,10 @@ def mescreen_newbd(Wpath, ObsID):
 		cmd = 'mescreen evtfile=%s gtifile=%s outfile=%s baddetfile=%s userdetid="0-53"' % (Wgradefile, Wbkg_gtifile, Wbkg_screenfile,bdet0file)
 		print('mescreen(all pixel) start')
 		print(cmd)
-		os.system(cmd)
+		if not os.path.exists(Wbkg_screenfile):
+			with open(program_tree + '/bkgscreen_manual.sh', 'a+') as f:
+				print>>f,cmd
+			os.system(cmd)
 		print('mescreen(all pixel) end')
 #####################################idcount & hr################################################
 		scrtype='bkg'

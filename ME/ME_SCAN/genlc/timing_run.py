@@ -184,21 +184,23 @@ def merun_v2(path, Wpath, ObsID):
 	np.savetxt(centre_txtfile, src_centre.T, fmt="%s")
 	#####################run the script of hxmtsoft###################################################################
 	print ObsID
-	if 1:###not os.path.exists(Wpifile):
+	if not os.path.exists(Wpifile):
 		cmd = 'mepical evtfile=%s tempfile=%s outfile=%s' % (meevtfile, metempfile, Wpifile)
 		print(cmd)
 		with open(program_tree + '/pi_manual.sh', 'a+') as f:
 			print>>f,cmd
 		cmd_tem = ';export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;' + cmd
-		exec_code, exec_log = exec_cmd(cmd_tem, my_env)
+		os.system(cmd)
+		###exec_code, exec_log = exec_cmd(cmd_tem, my_env)
 		print ObsID, " : pi end"
-	if 1:###not os.path.exists(Wdeadfile):
+	if not os.path.exists(Wdeadfile):
 		cmd = 'megrade evtfile=%s outfile=%s deadfile=%s binsize=1' % (Wpifile, Wgradefile, Wdeadfile)
 		print(cmd)
 		with open(program_tree + '/grade_manual.sh', 'a+') as f:
 			print>>f,cmd
 		cmd_tem = ';export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;' + cmd
-		exec_code, exec_log = exec_cmd(cmd_tem, my_env)
+		os.system(cmd)
+		###exec_code, exec_log = exec_cmd(cmd_tem, my_env)
 		print ObsID, " : grade end"
 
 	os.system("cp %s %s" % (ehkfile, Wehkfile))
@@ -215,7 +217,8 @@ def merun_v2(path, Wpath, ObsID):
 		with open(program_tree + '/gti_manual.sh', 'a+') as f:
 			print>>f,cmd
 		cmd_tem = ';export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;' + cmd
-		exec_code, exec_log = exec_cmd(cmd_tem, my_env)
+		os.system(cmd)
+		###exec_code, exec_log = exec_cmd(cmd_tem, my_env)
 		###os.system(cmd)
 			#os.system('hxmtehkgen orbfile=%s attfile=%s outfile=%s/%s/ehk.fits step_sec=0.25 leapfile=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/refdata/leapsec.fits rigidity=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/refdata/rigidity_20060421.fits saafile=/home/hxmt/guanj/zhaohsV2/hxmtehkgen/SAA/SAA.fits'%(orbitfile,attfile,Wpath,ObsID))
 			#os.system('megtigen tempfile=%s ehkfile=%s/%s/ehk.fits outfile=%s/%s/ME/gtiv2.fits defaultexpr=NONE expr="ELV>5&&COR3>=8&&T_SAA>=200&&TN_SAA>=100&&SAA_FLAG==0&&SUN_ANG>=10&&MOON_ANG>=5&&ANG_DIST<=359&&(SAT_LAT<31||SAT_LAT>38)&&(SAT_LON>245||SAT_LON<228)&&(SAT_LAT>=-36.5&&SAT_LAT<=36.5)"'%(metempfile,Wpath,ObsID,Wpath,ObsID))
@@ -227,10 +230,10 @@ def merun_v2(path, Wpath, ObsID):
 	print ObsID, " : r-gti end"
 
 	if not os.path.exists(Wbaddetfile):
-		mescreen_newbd.mescreen_newbd('%s' % Wpath,'%s' % ObsID)###
+		mescreen_newbd.mescreen_newbd('%s' % Wpath,'%s' % ObsID, program_tree)###
 		print ObsID, " : bd end"
 
-	if 1:###not os.path.exists(Wscreenfile):
+	if not os.path.exists(Wscreenfile):
 		cmd = 'mescreen evtfile=%s gtifile=%s outfile=%s baddetfile=%s userdetid="0-53"' % (Wgradefile, Wme_gtifile, Wscreenfile, Wbaddetfile)
 		print(cmd)
 		with open(program_tree + '/screen_manual.sh', 'a+') as f:
@@ -260,9 +263,11 @@ def merun_v2(path, Wpath, ObsID):
 	melcgen evtfile=%s deadfile=%s outfile=%s/%s/me_${box}_blind userdetid="${blind}" starttime=0 stoptime=0 minPI=68 maxPI=631 binsize=1 deadcorr=yes
 	done'''%(Wscreenfile, Wdeadfile, NetWpath, ObsID, Wscreenfile, Wdeadfile, NetWpath, ObsID)###change outfile name----
 	#melcgen evtfile=%s/%s/ME/me_screen.fits deadfile=%s/%s/ME/me_dt.fits outfile=%s/%s/ME/me_${box}_big userdetid="${big}" starttime=0 stoptime=0 minPI=68 maxPI=631 binsize=1 deadcorr=yes
-	if 1:###not os.path.exists("%s/%s/me_2_blind_g0_46.lc"%(NetWpath, ObsID)):
+	if not os.path.exists("%s/%s/me_2_blind_g0_46.lc"%(NetWpath, ObsID)):
 		print me_lc_cmd
 		#print ObsID
+		with open(program_tree + '/me_lc_manual.sh', 'a+') as f:
+			print>>f,me_lc_cmd
 		os.system(me_lc_cmd)
 		print ObsID, " : o-lc end"
 	os.system('rm -r %s/pfiles_%s' % (Ppath, ObsID))
@@ -290,8 +295,9 @@ def merun_v2(path, Wpath, ObsID):
 	with open(program_tree + '/gps_mission/lcfit_misson.sh', 'a+') as f:
 		print>>f,lcfit_command
 	cmd_tem = ';export HEADASNOQUERY=;export HEADASPROMPT=/dev/null;' + lcfit_command
-	exec_code, exec_log = exec_cmd(cmd_tem, my_env)
-	print('exec_code, exec_log:', exec_code, exec_log)
+	os.system(lcfit_command)
+	###exec_code, exec_log = exec_cmd(cmd_tem, my_env)
+	###print('exec_code, exec_log:', exec_code, exec_log)
 
 
 
