@@ -501,9 +501,13 @@ def mescreen_newbd(Wpath, ObsID, program_tree):
 ###########################################hp2(in gen lc)##################################################
 	scrtype2='rebin'
 	sel2=2
-	os.system('mescreen evtfile=%s \
+	cmd = 'mescreen evtfile=%s \
 		gtifile=%s outfile=%s \
-		baddetfile=%s userdetid="0-53"' % (Wgradefile, Wbkg_gtifile, Wrebin_screenfile, Wbaddetfile))
+		baddetfile=%s userdetid="0-53"' % (Wgradefile, Wbkg_gtifile, Wrebin_screenfile, Wbaddetfile)
+	if not os.path.exists( Wrebin_screenfile):
+		with open(program_tree + '/rebinscreen_manual.sh', 'a+') as f:
+			print >> f, cmd
+		os.system(cmd)
 	detidor, pior, startt, stopt, tstime, gtime, dett0, dettbr = read_scr(Wpath, ObsID, scrtype2)
 	gtnew_re=hptime(Wpath, ObsID, dettbr, scrtype2, sel2)
 
